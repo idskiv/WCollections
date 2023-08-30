@@ -1,0 +1,52 @@
+<Bindings>
+    <Binding name="WCOLLECTIONS_UNLOCK_SKIN" description="Unlock Skin Under Mouse Cursor" header="WCOLLECTIONS">
+        WCollections:UnlockSkinUnderCursor();
+    </Binding>
+    <Binding name="WCOLLECTIONS_MENU_WOWCIRCLE" description="Open .menu Menu">
+        WCollections:MenuWowcircle();
+    </Binding>
+    <Binding name="WCOLLECTIONS_MENU_TRANSMOG" description="Open Transmogrification Menu">
+        WCollections:MenuTransmog();
+    </Binding>
+    <Binding name="WCOLLECTIONS_MENU_TRANSMOG_SETS" description="Open Transmogrification Sets Menu">
+        WCollections:MenuTransmogSets();
+    </Binding>
+    <Binding name="WCOLLECTIONS_MENU_COLLECTIONS" description="Open Collections Menu">
+        WCollections:MenuCollections();
+    </Binding>
+    <Binding name="WCOLLECTIONS_MENU_DAILY" description="Open WoW Circle Activity Menu">
+        WCollections:MenuDaily();
+    </Binding>
+    <Binding name="TOGGLECOLLECTIONS">
+        if CollectionsJournal:IsShown() or WardrobeFrame:IsShown() then
+            HideUIPanel(CollectionsJournal);
+            HideUIPanel(WardrobeFrame);
+        elseif WCollections:GetCVar("petJournalTab") ~= 6 then
+            HideUIPanel(WardrobeFrame);
+            ShowUIPanel(CollectionsJournal);
+        else
+            HideUIPanel(CollectionsJournal);
+            ShowUIPanel(WardrobeFrame);
+        end
+    </Binding>
+    <Binding name="TOGGLECOLLECTIONSMOUNTJOURNAL">
+        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_MOUNTS);
+    </Binding>
+    <Binding name="TOGGLECOLLECTIONSPETJOURNAL">
+        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_PETS);
+    </Binding>
+    <Binding name="TOGGLECOLLECTIONSTOYBOX">
+        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_TOYS);
+    </Binding>
+    <!--
+    <Binding name="TOGGLECOLLECTIONSHEIRLOOM">
+        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_HEIRLOOMS);
+    </Binding>
+    -->
+    <Binding name="TOGGLECOLLECTIONSWARDROBE">
+        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_APPEARANCES);
+    </Binding>
+    <Binding name="TOGGLETRANSMOGRIFY">
+        ToggleFrame(WardrobeFrame);
+    </Binding>
+</Bindings>
