@@ -1,6 +1,6 @@
 MODELFRAME_DRAG_ROTATION_CONSTANT = 0.010;
 MODELFRAME_MAX_ZOOM = 0.7;
-MODELFRAME_MIN_ZOOM = 0.0;
+MODELFRAME_MIN_ZOOM = -2.0;
 MODELFRAME_ZOOM_STEP = 0.15;
 MODELFRAME_DEFAULT_ROTATION = 0.61;
 MODELFRAME_MAX_PLAYER_ZOOM = 0.8;
@@ -30,6 +30,7 @@ local ModelSettings = {
 	["DraeneiMale"   ] = { panMaxLeft = -0.6, panMaxRight = 0.6, panMaxTop = 0.95, panMaxBottom = -0.80, panValue = 28, zoomMultiplier = 4.5 },
 	["DraeneiMaleC"  ] = { panMaxLeft = -0.6, panMaxRight = 0.6, panMaxTop = 1.40, panMaxBottom = -0.45, panValue = 28, zoomMultiplier = 4.2 },
 	["DraeneiFemale" ] = { panMaxLeft = -0.3, panMaxRight = 0.3, panMaxTop = 0.80, panMaxBottom = -0.85, panValue = 31, zoomMultiplier = 3.8 },
+	["AuraModel"     ] = { panMaxLeft = -0.7, panMaxRight = 0.7, panMaxTop = 1.00, panMaxBottom = -1.00, panValue = 20, zoomMultiplier = 2.8 },
 };
 local function SelectSettings(model)
 	local playerRaceSex = select(2, UnitRace("player"));
@@ -41,6 +42,9 @@ local function SelectSettings(model)
 	model.cameraOption = WCollections and WCollections.Config and WCollections.Config.Wardrobe.CameraOption;
 	if model.cameraOption == "Classic" and ModelSettings[playerRaceSex.."C"] then
 		return ModelSettings[playerRaceSex.."C"];
+	end
+	if model.controlFrame and model.controlFrame.auraPanButton then
+		playerRaceSex = "AuraModel" ;
 	end
 	return ModelSettings[playerRaceSex];
 end

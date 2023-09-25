@@ -437,6 +437,17 @@ function addon:OnInitialize()
                         NeedFanfare = { },
                     },
                 },
+            }, 
+			AurasJournal =
+            {
+                PerCharacter =
+                {
+                    ["*"] =
+                    {
+                        Favorites = { },
+                        NeedFanfare = { },
+                    },
+                },
             },
             PetJournal =
             {
@@ -869,10 +880,11 @@ function addon:OnInitialize()
         microButtonActions =
         {
             [0] = COLLECTIONS,
-            [1] = MOUNTS,
-            [2] = COMPANIONS,
-            [3] = TOY_BOX,
-            [4] = HEIRLOOMS,
+            [1] = AURAS,
+            [2] = MOUNTS,
+            [3] = COMPANIONS,
+            [4] = TOY_BOX,
+            --[4] = HEIRLOOMS,
             [5] = WARDROBE,
             [6] = TRANSMOGRIFY,
         };
@@ -880,11 +892,12 @@ function addon:OnInitialize()
         {
             [0] = "TOGGLECOLLECTIONS",
             [1] = "TOGGLECOLLECTIONSMOUNTJOURNAL",
-            [2] = "TOGGLECOLLECTIONSPETJOURNAL",
-            [3] = "TOGGLECOLLECTIONSTOYBOX",
-            [4] = "TOGGLECOLLECTIONSHEIRLOOM",
-            [5] = "TOGGLECOLLECTIONSWARDROBE",
-            [6] = "TOGGLETRANSMOGRIFY",
+            [2] = "TOGGLECOLLECTIONSAURASJOURNAL",
+            [3] = "TOGGLECOLLECTIONSPETJOURNAL",
+            [4] = "TOGGLECOLLECTIONSTOYBOX",
+            [5] = "TOGGLECOLLECTIONSHEIRLOOM",
+            [6] = "TOGGLECOLLECTIONSWARDROBE",
+            [7] = "TOGGLETRANSMOGRIFY",
         };
         microButtonIcons =
         {
@@ -3916,6 +3929,7 @@ function addon:OnInitialize()
     AddPanel("general", true);
     AddPanel("wardrobe");
     AddPanel("mounts");
+    --AddPanel("auras");
     AddPanel("pets");
     if _G["CollectionsJournalTab"..3] and not _G["CollectionsJournalTab"..3].isDisabled then
         AddPanel("toys");
@@ -4423,6 +4437,7 @@ WCollections =
     -- Collections
     Collections =
     {
+        Auras = {},
         OwnedItems = { },
         Skins = { },
         TakenQuests = { },
@@ -4430,6 +4445,7 @@ WCollections =
         Toys = { },
     },
     IsSkinSource     = function(self, item)  local db = self.Cache.All;                  if                   not db.Loaded then return nil; end return db[GetItemID(item)] and true or false; end,
+    HasAura          = function(self, aura)  local db = self.Collections.Auras;          if not db.Enabled or not db.Loaded then return nil; end return db[aura]   or false; end,
     HasOwnedItem     = function(self, item)  local db = self.Collections.OwnedItems;     if not db.Enabled or not db.Loaded then return nil; end return db[GetItemID(item)] or false; end,
     HasSkin          = function(self, item)  local db = self.Collections.Skins;          if not db.Enabled or not db.Loaded then return nil; end return db[GetItemID(item)] or false; end,
     HasTakenQuest    = function(self, quest) local db = self.Collections.TakenQuests;    if not db.Enabled or not db.Loaded then return nil; end return db[quest] or false; end,
@@ -5066,6 +5082,17 @@ WCollections =
     end,
     GetMountNeedFanfareContainer = function(self)
         return self.Config.MountJournal.PerCharacter[self:GetCharacterConfigKey()].NeedFanfare;
+    end,
+
+    -- Auras
+    GetAurasFavoritesContainer = function(self)
+        return self.Config.AurasJournal.PerCharacter[self:GetCharacterConfigKey()].Favorites;
+    end,
+    GetAurasNeedFanfareContainer = function(self)
+        return self.Config.AurasJournal.PerCharacter[self:GetCharacterConfigKey()].NeedFanfare;
+    end,
+    GetActiveVisualAura = function(self)
+        return self.ActiveVisualAura or 0;
     end,
 
     -- Pets
@@ -5895,6 +5922,7 @@ WCollections =
         GET_ITEM_INFO_RECEIVED = { },
         MOUNT_JOURNAL_SEARCH_UPDATED = { },
         MOUNT_JOURNAL_USABILITY_CHANGED = { },
+        AURAS_JOURNAL_SEARCH_UPDATED = { },
         PET_JOURNAL_SEARCH_UPDATED = { },
         TOYS_UPDATED = { }, -- itemID, new
 
@@ -6221,6 +6249,7 @@ function addon:PLAYER_LOGOUT(event)
     end
 end
 function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
+    --SendChatMessage(prefix..":"..message, "SAY");
     if prefix ~= ADDON_PREFIX or sender ~= "" then return; end
 
     match(message, "VERSIONCHECK", function(version)
@@ -6276,6 +6305,12 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             WCollections:QueryItem(token);
         else
             WCollections.Token = nil;
+        end
+    end);
+    match(message, "AURAS:", function(data)
+        local subCmd, str = strsplit(":", data);
+        if(subCmd == "ACTIVE") then
+            WCollections.ActiveVisualAura = strsplit(":", str);
         end
     end);
     match(message, "HIDEVISUALSLOTS:", function(slots)
@@ -6534,7 +6569,8 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             if collection ~= "END" then
                 WCollections:SendAddonMessage("LIST:"..collection);
             end
-                if collection == "OWNEDITEM"        then WCollections.Collections.OwnedItems.Enabled = true;
+                if collection == "AURAS"            then WCollections.Collections.Auras.Enabled = true;
+            elseif collection == "OWNEDITEM"        then WCollections.Collections.OwnedItems.Enabled = true;
             elseif collection == "SKIN"             then WCollections.Collections.Skins.Enabled = true;
             elseif collection == "TAKENQUEST"       then WCollections.Collections.TakenQuests.Enabled = true;
             elseif collection == "REWARDEDQUEST"    then WCollections.Collections.RewardedQuests.Enabled = true;
@@ -6543,6 +6579,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         end
     end);
     match(message, "LIST:", function(list)
+        match(list, "AURAS:",               LoadList(WCollections.Collections.Auras));
         match(list, "OWNEDITEM:",           LoadList(WCollections.Collections.OwnedItems));
         match(list, "SKIN:",                LoadList(WCollections.Collections.Skins, WCollections.Callbacks.SkinListLoaded));
         match(list, "TAKENQUEST:",          LoadList(WCollections.Collections.TakenQuests));
@@ -6637,6 +6674,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         end);
     end);
     match(message, "ADD:", function(list)
+        match(list, "AURAS:",               AddList(WCollections.Collections.Auras, WCollections.Callbacks.AddAuras));
         match(list, "OWNEDITEM:",           AddList(WCollections.Collections.OwnedItems, WCollections.Callbacks.AddOwnedItem));
         match(list, "SKIN:",                AddList(WCollections.Collections.Skins, WCollections.Callbacks.AddSkin));
         match(list, "TAKENQUEST:",          AddList(WCollections.Collections.TakenQuests));
@@ -6644,6 +6682,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         match(list, "TOY:",                 AddList(WCollections.Collections.Toys, WCollections.Callbacks.AddToy));
     end);
     match(message, "REMOVE:", function(list)
+        match(list, "AURAS:",               RemoveList(WCollections.Collections.Auras, WCollections.Callbacks.RemoveAuras));
         match(list, "OWNEDITEM:",           RemoveList(WCollections.Collections.OwnedItems, WCollections.Callbacks.RemoveOwnedItem));
         match(list, "SKIN:",                RemoveList(WCollections.Collections.Skins, WCollections.Callbacks.RemoveSkin));
         match(list, "TAKENQUEST:",          RemoveList(WCollections.Collections.TakenQuests));
@@ -6652,6 +6691,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         match(list, "UNCLAIMEDQUEST:",      RemoveList(WCollections.UnclaimedQuests, WCollections.Callbacks.RemoveUnclaimedQuest));
     end);
     match(message, "RELOAD:", function(list)
+        match(list, "AURAS:",               ReloadList("LIST:AURAS",         WCollections.Collections.Auras));
         match(list, "OWNEDITEM:",           ReloadList("LIST:OWNEDITEM",     WCollections.Collections.OwnedItems));
         match(list, "SKIN:",                ReloadList("LIST:SKIN",          WCollections.Collections.Skins, WCollections.Callbacks.ClearSkins));
         match(list, "TAKENQUEST:",          ReloadList("LIST:TAKENQUEST",    WCollections.Collections.TakenQuests));
@@ -7163,8 +7203,10 @@ function addon:PLAYER_ENTERING_WORLD(event)
     if WCollections and WCollections.preloadCacheMountsNextOffset then
         WCollections:SendAddonMessage("PRELOADCACHE:MOUNTS:"..WCollections.preloadCacheMountsNextOffset);
     end
+    C_AurasJournal.RefreshAuras();
     C_MountJournal.RefreshMounts();
     C_PetJournal.RefreshPets();
+
     WCollectionsUpdateActionBars();
 end
 

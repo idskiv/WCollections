@@ -14,7 +14,7 @@ function WardrobeFrame_OnLoad(self)
 	Mixin(self, SetShownMixin);
 	SetPortraitToTexture(WardrobeFramePortrait, [[Interface\AddOns\WCollections\Interface\Icons\INV_Arcane_Orb]]);
 	WardrobeFrameTitleText:SetText(TRANSMOGRIFY);
-	WardrobeFrameTab4.isDisabled = true;
+	--WardrobeFrameTab5.isDisabled = true;
 	PanelTemplates_SetNumTabs(self, 6);
 	PanelTemplates_SetTab(self, 6);
 end

@@ -9,6 +9,7 @@ embeds.xml
 
 # Emulation
 Interface\SharedXML\C_MountJournal.lua
+Interface\SharedXML\C_AurasJournal.lua
 Interface\SharedXML\C_PetJournal.lua
 Interface\SharedXML\C_Timer.lua
 Interface\SharedXML\C_TimerAugment.lua
@@ -79,6 +80,8 @@ Data\Mounts.enUS.lua
 Data\Mounts.ruRU.lua
 Data\Pets.enUS.lua
 Data\Pets.ruRU.lua
+Data\Auras.enUS.lua
+Data\Auras.ruRU.lua
 Data\Set.lua
 Data\Skin.lua
 
@@ -86,6 +89,7 @@ Data\Skin.lua
 Interface\AddOns\Blizzard_Collections\Blizzard_CollectionTemplates.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_Collections.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_MountCollection.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_AurasCollection.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_PetCollection.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_ToyBox.xml
 #Interface\AddOns\Blizzard_Collections\Blizzard_HeirloomCollection.xml

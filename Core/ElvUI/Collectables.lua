@@ -237,6 +237,34 @@ local function SkinMountFrame()
 	MountJournal.MountButton.SubscriptionOverlay:SetScale(1.2);
 end
 
+local function SkinAurasFrame()
+	S:HandleItemButton(_G.AurasJournalSummonRandomFavoriteButton, true)
+	S:HandleButton_WCollections(_G.AurasJournalFilterButton)
+
+	_G.AurasJournalFilterButton:ClearAllPoints()
+	_G.AurasJournalFilterButton:Point('LEFT', _G.AurasJournalSearchBox, 'RIGHT', 5, 0)
+
+	local AurasJournal = _G.AurasJournal
+	AurasJournal:StripTextures_WCollections()
+	AurasJournal.AurasDisplay:StripTextures_WCollections()
+	AurasJournal.AurasDisplay.ShadowOverlay:StripTextures_WCollections()
+	AurasJournal.AurasCount:StripTextures_WCollections()
+	AurasJournal.SubscriptionStatus:StripTextures_WCollections()
+
+	S:HandleIcon(AurasJournal.AurasDisplay.InfoButton.Icon)
+
+	S:HandleButton(_G.AurasJournalMountButton)
+	S:HandleEditBox(_G.AurasJournalSearchBox)
+	S:HandleScrollBar(_G.AurasJournalListScrollFrameScrollBar)
+	S:HandleRotateButton(AurasJournal.AurasDisplay.ModelFrame.RotateLeftButton)
+	S:HandleRotateButton(AurasJournal.AurasDisplay.ModelFrame.RotateRightButton)
+
+	JournalScrollButtons(AurasJournal.ListScrollFrame)
+
+	AurasJournal.AurasButton.SubscriptionOverlay:Point("LEFT", AurasJournal.AurasButton, "RIGHT", 0, 0);
+	AurasJournal.AurasButton.SubscriptionOverlay:SetScale(1.2);
+end
+
 local function SkinPetFrame()
 	S:HandleItemButton(_G.PetJournalSummonRandomFavoritePetButton, true)
 	S:HandleButton_WCollections(_G.PetJournalFilterButton)
@@ -583,6 +611,7 @@ local function SkinCollectionsFrames()
 		S:HandleTab(_G['CollectionsJournalTab'..i])
 	end
 
+	SkinAurasFrame()
 	SkinMountFrame()
 	SkinPetFrame()
 	SkinToyFrame()

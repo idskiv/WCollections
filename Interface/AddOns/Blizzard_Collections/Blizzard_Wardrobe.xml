@@ -3523,17 +3523,17 @@
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="11" y="2"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab2" inherits="CollectionsJournalTabCutoff" text="COMPANIONS" id="2">
+			<Button name="$parentTab2" inherits="CollectionsJournalTabCutoff" text="AURAS" id="2">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab3" inherits="CollectionsJournalTab" text="TOY_BOX" id="3">
+			<Button name="$parentTab3" inherits="CollectionsJournalTabCutoff" text="COMPANIONS" id="3">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab4" inherits="CollectionsJournalTab" text="HEIRLOOMS" id="4">
+			<Button name="$parentTab4" inherits="CollectionsJournalTab" text="TOY_BOX" id="4">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>

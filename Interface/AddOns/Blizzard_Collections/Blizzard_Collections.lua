@@ -50,9 +50,10 @@ function CollectionsJournal_UpdateSelectedTab(self)
 	end
 	
 	MountJournal:SetShown(selected == 1);
-	PetJournal:SetShown(selected == 2);
-	ToyBox:SetShown(selected == 3);
-	--HeirloomsJournal:SetShown(selected == 4);
+	AurasJournal:SetShown(selected == 2);
+	PetJournal:SetShown(selected == 3);
+	ToyBox:SetShown(selected == 4);
+	--HeirloomsJournal:SetShown(selected == 5);
 	-- don't touch the wardrobe frame if it's used by the transmogrifier
 	if ( WardrobeCollectionFrame:GetParent() == self or not WardrobeCollectionFrame:GetParent():IsShown() ) then
 		if ( selected == 5 ) then
@@ -65,12 +66,12 @@ function CollectionsJournal_UpdateSelectedTab(self)
 
 	if ( selected == 1 ) then
 		CollectionsJournalTitleText:SetText(MOUNTS);
-	elseif (selected == 2 ) then
-		CollectionsJournalTitleText:SetText(COMPANIONS);
+	elseif ( selected == 2 ) then
+		CollectionsJournalTitleText:SetText(AURAS);
 	elseif (selected == 3 ) then
-		CollectionsJournalTitleText:SetText(TOY_BOX);
+		CollectionsJournalTitleText:SetText(COMPANIONS);
 	elseif (selected == 4 ) then
-		CollectionsJournalTitleText:SetText(HEIRLOOMS);
+		CollectionsJournalTitleText:SetText(TOY_BOX);
 	elseif (selected == 5 ) then
 		CollectionsJournalTitleText:SetText(WARDROBE);
 	end
