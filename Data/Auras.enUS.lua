@@ -9,7 +9,7 @@ WCollections.AurasTemplate =
     [69663] = {"spells\\skull.mdx", "|cFFFFD200Source: |rScary lootbox 2019"},
     [70788] = {"world\\generic\\passivedoodads\\particleemitters\\aurayellowshort.mdx", "|cFFFFD200Source: |rScary lootbox 2019"},
     [72523] = {"spells\\shadowmourne_cast_high.mdx", "|cFFFFD200Source: |rScary lootbox 2019"},
-    [31796] = {"Spells\\Crow_Baked.mdx", "|cFFFFD200Source: |rЛScary lootbox 2019"},
+    [31796] = {"Spells\\Crow_Baked.mdx", "|cFFFFD200Source: |rScary lootbox 2019"},
 
     -- Sunny lootbox 2021
     [44885] = {"Spells\\Nature_Precast_Chest.mdx", "|cFFFFD200Source: |rSunny lootbox 2021, Chest of Souls(Special quests)"},

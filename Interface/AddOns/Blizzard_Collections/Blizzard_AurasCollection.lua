@@ -167,7 +167,7 @@ function AurasJournal_UpdateAurasDisplay()
     C_AurasJournal.UpdateActiveAura();
 	if ( AurasJournal.selectedAurasID ) then
 		local auraName, spellID, icon, modelPath, active, _, source, isCollected = C_AurasJournal.GetAuraInfoByID(AurasJournal.selectedAurasID);
-		if auraName and ( AurasJournal.AurasDisplay.lastDisplayed ~= spellID ) then
+		if auraName then
 			local needsFanFare = C_AurasJournal.NeedsFanfare(AurasJournal.selectedAurasID);
 
 			AurasJournal.AurasDisplay.InfoButton.Name:SetText(auraName);

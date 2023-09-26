@@ -14,7 +14,7 @@ WCollections.AurasTemplate =
     [69663] = {"spells\\skull.mdx", "|cFFFFD200Источник: |rЖуткий лутбокс 2019"},
     [70788] = {"world\\generic\\passivedoodads\\particleemitters\\aurayellowshort.mdx", "|cFFFFD200Источник: |rЖуткий лутбокс 2019"},
     [72523] = {"spells\\shadowmourne_cast_high.mdx", "|cFFFFD200Источник: |rЖуткий лутбокс 2019"},
-    [31796] = {"Spells\\Crow_Baked.mdx", "|cFFFFD200Источник: |rЛЖуткий лутбокс 2019"},
+    [31796] = {"Spells\\Crow_Baked.mdx", "|cFFFFD200Источник: |rЖуткий лутбокс 2019"},
 
     -- Солнечный лутбокс 2021
     [44885] = {"Spells\\Nature_Precast_Chest.mdx", "|cFFFFD200Источник: |rСолнечный лутбокс 2021, Ларец Душ(Особые задания)"},

@@ -171,6 +171,10 @@ function C_AurasJournal.SetSearch(searchValue)
     SearchUpdated();
 end
 
+function C_AurasJournal.ClearRecentFanfares()
+    table.wipe(WCollections:GetAurasNeedFanfareContainer());
+end
+
 function C_AurasJournal.UpdateActiveAura()
     WCollections:SendAddonMessage("AURAS:ACTIVE");
 end

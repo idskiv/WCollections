@@ -259,19 +259,6 @@
 							</Layer>
 						</Layers>
 					</Button>
-					<!--
-					<PlayerModel parentKey="WrappedModelFrame" useParentLevel="true" frameStrata="DIALOG" inherits="CollectionsWrappedModelFrame">
-						<Anchors>
-							<Anchor point="TOPLEFT" x="0" y="-160"/>
-							<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								AurasJournalAurasButton_UseAuras(AurasJournal.selectedAurasID);
-							</OnMouseUp>
-						</Scripts>
-					</PlayerModel>
-					-->
 					<PlayerModel parentKey="ModelWithControlsTemplate" useParentLevel="true" inherits="ModelWithZoomTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" x="0" y="-120"/>
@@ -305,43 +292,6 @@
 										</OnMouseUp>
 									</Scripts>
 								</Button>
-								<!--<Button parentKey="RotateLeftButton">
-									<Size x="35" y="35"/>
-									<Anchors>
-										<Anchor point="TOPRIGHT" relativePoint="BOTTOM" x="-5" y="50"/>
-									</Anchors>
-									<Scripts>
-										<OnLoad>
-											self:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
-										</OnLoad>
-										<OnClick>
-											Model_RotateLeft(self:GetParent());
-										</OnClick>
-									</Scripts>
-									<NormalTexture file="Interface\Buttons\UI-RotationLeft-Button-Up"/>
-									<PushedTexture file="Interface\Buttons\UI-RotationLeft-Button-Down"/>
-									<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
-								</Button>
-								<Button parentKey="RotateRightButton">
-									<Size>
-										<AbsDimension x="35" y="35"/>
-									</Size>
-									<Anchors>
-										<Anchor point="TOPLEFT" relativePoint="BOTTOM" x="5" y="50"/>
-									</Anchors>
-									<Scripts>
-										<OnLoad>
-											self:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
-										</OnLoad>
-										<OnClick>
-											Model_RotateRight(self:GetParent());
-										</OnClick>
-									</Scripts>
-									<NormalTexture file="Interface\Buttons\UI-RotationRight-Button-Up"/>
-									<PushedTexture file="Interface\Buttons\UI-RotationRight-Button-Down"/>
-									<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
-								</Button>
-								-->
 							</Frames>
 							</Frame>
 						</Frames>
@@ -398,19 +348,6 @@
 						</Scripts>
 					</Frame>
 				</Frames>
-				<!--
-				<Animations>
-					<AnimationGroup parentKey="UnwrapAnim" setToFinalAlpha="true">
-						<Alpha childKey="WrappedModelFrame" startDelay="1.2" fromAlpha="1" toAlpha="0" duration=".3" order="1"/>
-						<Alpha childKey="ModelFrame" startDelay="1.2" fromAlpha="0" toAlpha="1" duration=".3" order="1"/>
-						<Scripts>
-							<OnFinished>
-								self:GetParent().WrappedModelFrame:Hide();
-							</OnFinished>
-						</Scripts>
-					</AnimationGroup>
-				</Animations>
-				-->
 			</Frame>
 			<!--Name needed for HybridScrollFrameTemplate-->
 			<ScrollFrame name="$parentListScrollFrame" parentKey="ListScrollFrame" inherits="HybridScrollFrameTemplate">
