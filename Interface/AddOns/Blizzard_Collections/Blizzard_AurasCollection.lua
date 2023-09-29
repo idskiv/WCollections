@@ -28,7 +28,7 @@ function AurasJournal_OnShow(self)
 		AurasJournal_Select(1);
 	end
 	AurasJournal_UpdateAurasDisplay();
-	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\WCollections\Interface\Icons\AurasJournalPortrait]]);
+	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\WCollections\Interface\Icons\Spell_Holy_PowerWordBarrier]]);
 	-- Fix frame levels
 	self.LeftInset:SetFrameLevel(self:GetFrameLevel() + 1);
 	self.RightInset:SetFrameLevel(self:GetFrameLevel() + 1);
