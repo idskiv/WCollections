@@ -1086,7 +1086,7 @@ function addon:OnInitialize()
                 ShowUIPanel(WardrobeFrame);
             else
                 HideUIPanel(WardrobeFrame);
-                ToggleCollectionsJournal(action);
+                ToggleCollectionsJournal();
             end
         end);
         CollectionsMicroButton:Hide();
@@ -1132,6 +1132,12 @@ function addon:OnInitialize()
             OnClick = function(ldb, button)
                 if button == "LeftButton" or button == "RightButton" then
                     local window = CollectionsJournal;
+                    local tab ;
+                    for id = 1, 6 do
+                        if _G["CollectionsJournalTab"..id] and _G["CollectionsJournalTab"..id].isDisabled then
+                            tab = id;
+                        end
+                    end
                     if button == "RightButton" then
                         if WCollections.Config.Wardrobe.MinimapButtonCollectionsRMB then
                             window = WardrobeFrame;
@@ -1145,7 +1151,7 @@ function addon:OnInitialize()
                         HideUIPanel(window);
                     elseif window == CollectionsJournal then
                         HideUIPanel(WardrobeFrame);
-                        ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_APPEARANCES);
+                        ToggleCollectionsJournal(tab);
                     elseif window == WardrobeFrame then
                         HideUIPanel(CollectionsJournal);
                         ShowUIPanel(WardrobeFrame);
@@ -1403,6 +1409,14 @@ function addon:OnInitialize()
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["mounts"]); end,
                         dialogControl = "WCollectionsOptionsMediumButtonTemplate",
                     },
+                    panelAuras =
+                    {
+                        type = "input",
+                        name = format(L["Config.General.Panel.Tab"], AURAS),
+                        order = 150.1,
+                        func = function() InterfaceOptionsFrame_OpenToCategory(panels["auras"]); end,
+                        dialogControl = "WCollectionsOptionsMediumButtonTemplate",
+                    },
                     panelPets =
                     {
                         type = "input",
@@ -1605,6 +1619,14 @@ function addon:OnInitialize()
                         name = format(L["Config.General.Panel.Tab"], MOUNTS),
                         order = 0.1,
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["mounts"]); end,
+                        dialogControl = "WCollectionsOptionsMediumButtonTemplate",
+                    },
+                    panelAuras =
+                    {
+                        type = "input",
+                        name = format(L["Config.General.Panel.Tab"], AURAS),
+                        order = 0.1,
+                        func = function() InterfaceOptionsFrame_OpenToCategory(panels["auras"]); end,
                         dialogControl = "WCollectionsOptionsMediumButtonTemplate",
                     },
                     panelPets =
@@ -1861,6 +1883,35 @@ function addon:OnInitialize()
                                 order = 200,
                                 get = function(info) return WCollections.Config.Wardrobe.MountsShowHidden; end,
                                 set = function(info, value) WCollections.Config.Wardrobe.MountsShowHidden = value; WCollections.Callbacks.MountListUpdated(); end,
+                            },
+                        },
+                    },
+                },
+            },
+            auras =
+            {
+                type = "group",
+                name = L["Config.Auras"],
+                args =
+                {
+                    list =
+                    {
+                        type = "group",
+                        name = L["Config.Auras.List"],
+                        inline = true,
+                        order = 100,
+                        args =
+                        {
+                            mountsShowHidden =
+                            {
+                                type = "toggle",
+                                name = L["Config.Wardrobe.AurasShowHidden"],
+                                desc = L["Config.Wardrobe.AurasShowHidden.Desc"],
+                                descStyle = "inline",
+                                width = "full",
+                                order = 200,
+                                get = function(info) return WCollections.Config.Wardrobe.AurasShowHidden; end,
+                                set = function(info, value) WCollections.Config.Wardrobe.AurasShowHidden = value; WCollections.Callbacks.AurasListUpdated(); end,
                             },
                         },
                     },
@@ -3929,7 +3980,7 @@ function addon:OnInitialize()
     AddPanel("general", true);
     AddPanel("wardrobe");
     AddPanel("mounts");
-    --AddPanel("auras");
+    AddPanel("auras");
     AddPanel("pets");
     if _G["CollectionsJournalTab"..3] and not _G["CollectionsJournalTab"..3].isDisabled then
         AddPanel("toys");
@@ -5488,6 +5539,10 @@ WCollections =
             WCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
             WCollections.IconOverlays:Update();
         end,
+        AurasListUpdated = function()
+            WCollections:RaiseEvent("AURAS_JOURNAL_SEARCH_UPDATED");
+            WCollections.IconOverlays:Update();
+        end,
         PetListUpdated = function()
             WCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
             WCollections.IconOverlays:Update();
@@ -6310,7 +6365,10 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
     match(message, "AURAS:", function(data)
         local subCmd, str = strsplit(":", data);
         if(subCmd == "ACTIVE") then
-            WCollections.ActiveVisualAura = strsplit(":", str);
+            local actAura = strsplit(":", str);
+            if(actAura) then
+                WCollections.ActiveVisualAura = actAura;
+            end;
         end
     end);
     match(message, "HIDEVISUALSLOTS:", function(slots)

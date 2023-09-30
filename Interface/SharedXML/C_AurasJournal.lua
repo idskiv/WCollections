@@ -180,5 +180,5 @@ function C_AurasJournal.UpdateActiveAura()
 end
 
 function C_AurasJournal.GetAurasList()
-    WCollections:SendAddonMessage("AURAS:LIST");
+    WCollections:SendAddonMessage("LIST:AURAS");
 end
