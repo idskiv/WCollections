@@ -166,7 +166,7 @@ function AurasJournal_UpdateAurasDisplay()
 	C_AurasJournal.GetAurasList();
     C_AurasJournal.UpdateActiveAura();
 	if ( AurasJournal.selectedAurasID ) then
-		local auraName, spellID, icon, modelPath, active, _, source, isCollected = C_AurasJournal.GetAuraInfoByID(AurasJournal.selectedAurasID);
+		local auraName, spellID, icon, modelPath, active, _, source, isCollected, camera_x, camera_y, camera_z = C_AurasJournal.GetAuraInfoByID(AurasJournal.selectedAurasID);
 		if auraName then
 			local needsFanFare = C_AurasJournal.NeedsFanfare(AurasJournal.selectedAurasID);
 
@@ -189,8 +189,7 @@ function AurasJournal_UpdateAurasDisplay()
 			AurasJournal.AurasDisplay.lastDisplayed = spellID;
 
 			AurasJournal.AurasDisplay.ModelWithControlsTemplate:Hide();
-			AurasJournal.AurasDisplay.ModelWithControlsTemplate:SetPosition(0, 0, 0);
-			--AurasJournal.AurasDisplay.ModelWithControlsTemplate.zoomLevel = 0;
+			AurasJournal.AurasDisplay.ModelWithControlsTemplate:SetPosition(camera_x, camera_y, camera_z);
 			AurasJournal.AurasDisplay.ModelWithControlsTemplate:SetModel(modelPath);
 			AurasJournal.AurasDisplay.ModelWithControlsTemplate:Show();
 		end
@@ -244,6 +243,12 @@ function AurasJournalAurasButton_OnClick(self)
 	end
 end
 
+function AurasJournalAurasButton2_OnClick(self)
+	if AurasJournal.selectedAurasID then
+		SendChatMessage("AURAS:TEST:"..AurasJournal.selectedAurasID, "SAY");
+		WCollections:SendAddonMessage("AURAS:TEST:"..AurasJournal.selectedAurasID);
+	end
+end
 
 function AurasListItem_OnClick(self, button)
 	if not self.spellID or self.spellID == 0 then

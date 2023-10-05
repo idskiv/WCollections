@@ -101,7 +101,7 @@ function C_AurasJournal.GetAuraIDs()
 end
 
 function C_AurasJournal.GetAuraInfoByID(auraID)
-    local _, name, icon, modelPath, isActive, isFavorite, source, isCollected;
+    local _, name, icon, modelPath, isActive, isFavorite, source, isCollected, camera_x, camera_y, camera_z;
 
     name, _, icon = GetSpellInfo(auraID);
     if(name) then
@@ -112,6 +112,9 @@ function C_AurasJournal.GetAuraInfoByID(auraID)
         isFavorite = WCollections:GetAurasFavoritesContainer()[auraID] and true or false;
         source = WCollections.AurasTemplate[auraID][2];
         modelPath = WCollections.AurasTemplate[auraID][1];
+        camera_x = WCollections.AurasTemplate[auraID][3];
+        camera_y = WCollections.AurasTemplate[auraID][4];
+        camera_z = WCollections.AurasTemplate[auraID][5];
 
         if _collectedAurasID[auraID] then
             isCollected = true;
@@ -126,9 +129,9 @@ function C_AurasJournal.GetAuraInfoByID(auraID)
             isActive = false;
         end
 
-        return name or "", auraID, icon, modelPath, isActive, isFavorite, source, isCollected;
+        return name or "", auraID, icon, modelPath, isActive, isFavorite, source, isCollected, camera_x, camera_y, camera_z;
     end
-    return "Unnamed aura", 0, icon, modelPath, isActive, isFavorite, source, isCollected;
+    return "Unnamed aura", 0, icon, modelPath, isActive, isFavorite, source, isCollected, camera_x, camera_y, camera_z;
 end
 
 function C_AurasJournal.GetNumDisplayedAuras()
