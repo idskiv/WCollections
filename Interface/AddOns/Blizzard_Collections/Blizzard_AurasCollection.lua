@@ -28,7 +28,7 @@ function AurasJournal_OnShow(self)
 		AurasJournal_Select(1);
 	end
 	AurasJournal_UpdateAurasDisplay();
-	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\WCollections\Interface\Icons\Spell_Holy_PowerWordBarrier]]);
+	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\Icons\Spell_Holy_PowerWordBarrier]]);
 	-- Fix frame levels
 	self.LeftInset:SetFrameLevel(self:GetFrameLevel() + 1);
 	self.RightInset:SetFrameLevel(self:GetFrameLevel() + 1);
@@ -245,7 +245,6 @@ end
 
 function AurasJournalAurasButton2_OnClick(self)
 	if AurasJournal.selectedAurasID then
-		SendChatMessage("AURAS:TEST:"..AurasJournal.selectedAurasID, "SAY");
 		WCollections:SendAddonMessage("AURAS:TEST:"..AurasJournal.selectedAurasID);
 	end
 end

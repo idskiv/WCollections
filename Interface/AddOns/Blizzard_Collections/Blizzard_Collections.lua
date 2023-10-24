@@ -49,14 +49,15 @@ function CollectionsJournal_UpdateSelectedTab(self)
 		selected = 1;
 	end
 	
-	MountJournal:SetShown(selected == 1);
-	AurasJournal:SetShown(selected == 2);
-	PetJournal:SetShown(selected == 3);
-	ToyBox:SetShown(selected == 4);
-	--HeirloomsJournal:SetShown(selected == 5);
+	NewsJournal:SetShown(selected == 1);
+	MountJournal:SetShown(selected == 2);
+	AurasJournal:SetShown(selected == 3);
+	PetJournal:SetShown(selected == 4);
+	ToyBox:SetShown(selected == 5);
+	--HeirloomsJournal:SetShown(selected == 6);
 	-- don't touch the wardrobe frame if it's used by the transmogrifier
 	if ( WardrobeCollectionFrame:GetParent() == self or not WardrobeCollectionFrame:GetParent():IsShown() ) then
-		if ( selected == 5 ) then
+		if ( selected == 6 ) then
 			HideUIPanel(WardrobeFrame);
 			WardrobeCollectionFrame_SetContainer(self);
 		else
@@ -65,14 +66,16 @@ function CollectionsJournal_UpdateSelectedTab(self)
 	end
 
 	if ( selected == 1 ) then
-		CollectionsJournalTitleText:SetText(MOUNTS);
+		CollectionsJournalTitleText:SetText(NEWS);
 	elseif ( selected == 2 ) then
+		CollectionsJournalTitleText:SetText(MOUNTS);
+	elseif ( selected == 3 ) then
 		CollectionsJournalTitleText:SetText(AURAS);
-	elseif (selected == 3 ) then
-		CollectionsJournalTitleText:SetText(COMPANIONS);
 	elseif (selected == 4 ) then
-		CollectionsJournalTitleText:SetText(TOY_BOX);
+		CollectionsJournalTitleText:SetText(COMPANIONS);
 	elseif (selected == 5 ) then
+		CollectionsJournalTitleText:SetText(TOY_BOX);
+	elseif (selected == 6 ) then
 		CollectionsJournalTitleText:SetText(WARDROBE);
 	end
 

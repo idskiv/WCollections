@@ -12,7 +12,7 @@ local _showFlying = nil;
 local _showAquatic = nil;
 local _sources = { };
 local _search = nil;
-local _macroBody = "/click MountJournalSummonRandomFavoriteButton";
+local _macroBody = "/cancelform\r\n/click MountJournalSummonRandomFavoriteButton";
 
 --[[
     WCollections.Mounts[id][2] = type (non-blizzlike):
@@ -78,9 +78,7 @@ local function IsMountUsable(mountID)
 
     local isAQMount = mountID == 25953 or mountID == 26054 or mountID == 26055 or mountID == 26056;
     local zone = GetMinimapZoneText();
-    if zone == "Ahn'Qiraj" or zone == "Ahn Qiraj" or zone == "Ан'Кираж" then
-        return isAQMount;
-    elseif isAQMount then
+    if not (zone == "Ahn'Qiraj" or zone == "Ahn Qiraj" or zone == "Ан'Кираж") and isAQMount then
         return false;
     end
 

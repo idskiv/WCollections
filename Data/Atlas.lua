@@ -39,7 +39,7 @@ WCollections.AtlasMember =
 {
     ["mountjournalicons-alliance"] = { 114, 1, 47, 1, 45 },
     ["mountjournalicons-horde"] = { 114, 49, 95, 1, 45 },
-	["aurasjournalicons"] = { 114, 49, 95, 1, 45 },
+    ["aurasjournalicons"] = { 114, 49, 95, 1, 45 },
     ["transmog-frame-pink"] = { 610, 239, 283, 1, 44 },
     ["transmog-frame-red"] = { 610, 285, 329, 1, 44 },
     ["transmog-frame-selected"] = { 610, 105, 167, 337, 399 },

@@ -2,12 +2,15 @@
 ## Title: WCollections
 ## Notes: Adds clientside support for Collections and Transmogrification features, as well as retail UI for mounts and companions
 ## Notes-ruRU: Добавляет клиентскую поддержку для коллекций и трансмогрификации, а также интерфейс транспорта и спутников из новых версий WoW
-## Version: 1.0.1
+## Version: 1.1.0
 ## SavedVariables: WCollectionsConfig, WCollectionsCache
+## X-Maintained: WoW Circle Team
+## X-Credits: ZEUStiger, Blizzard
 
 embeds.xml
 
 # Emulation
+Interface\SharedXML\C_NewsJournal.lua
 Interface\SharedXML\C_MountJournal.lua
 Interface\SharedXML\C_AurasJournal.lua
 Interface\SharedXML\C_PetJournal.lua
@@ -88,6 +91,7 @@ Data\Skin.lua
 # Collections Code
 Interface\AddOns\Blizzard_Collections\Blizzard_CollectionTemplates.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_Collections.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_News.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_MountCollection.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_AurasCollection.xml
 Interface\AddOns\Blizzard_Collections\Blizzard_PetCollection.xml

@@ -209,6 +209,33 @@ local function JournalScrollButtons(frame)
 	end
 end
 
+local function SkinNewsFrame()
+	S:HandleItemButton(_G.NewsJournalSummonRandomFavoriteButton, true)
+	S:HandleButton_WCollections(_G.NewsJournalFilterButton)
+
+	_G.NewsJournalFilterButton:ClearAllPoints()
+	_G.NewsJournalFilterButton:Point('LEFT', _G.NewsJournalSearchBox, 'RIGHT', 5, 0)
+
+	local NewsJournal = _G.NewsJournal
+	NewsJournal:StripTextures_WCollections()
+	NewsJournal.NewsDisplay:StripTextures_WCollections()
+	NewsJournal.NewsDisplay.ShadowOverlay:StripTextures_WCollections()
+	NewsJournal.NewsCount:StripTextures_WCollections()
+
+	S:HandleIcon(NewsJournal.NewsDisplay.InfoButton.Icon)
+
+	S:HandleButton(_G.NewsJournalNewsButton)
+	S:HandleEditBox(_G.NewsJournalSearchBox)
+	S:HandleScrollBar(_G.NewsJournalListScrollFrameScrollBar)
+	S:HandleRotateButton(NewsJournal.NewsDisplay.ModelFrame.RotateLeftButton)
+	S:HandleRotateButton(NewsJournal.NewsDisplay.ModelFrame.RotateRightButton)
+
+	JournalScrollButtons(NewsJournal.ListScrollFrame)
+
+	NewsJournal.NewsButton.SubscriptionOverlay:Point("LEFT", NewsJournal.NewsButton, "RIGHT", 0, 0);
+	NewsJournal.NewsButton.SubscriptionOverlay:SetScale(1.2);
+end
+
 local function SkinMountFrame()
 	S:HandleItemButton(_G.MountJournalSummonRandomFavoriteButton, true)
 	S:HandleButton_WCollections(_G.MountJournalFilterButton)
@@ -221,7 +248,6 @@ local function SkinMountFrame()
 	MountJournal.MountDisplay:StripTextures_WCollections()
 	MountJournal.MountDisplay.ShadowOverlay:StripTextures_WCollections()
 	MountJournal.MountCount:StripTextures_WCollections()
-	MountJournal.SubscriptionStatus:StripTextures_WCollections()
 
 	S:HandleIcon(MountJournal.MountDisplay.InfoButton.Icon)
 
@@ -253,7 +279,7 @@ local function SkinAurasFrame()
 
 	S:HandleIcon(AurasJournal.AurasDisplay.InfoButton.Icon)
 
-	S:HandleButton(_G.AurasJournalMountButton)
+	S:HandleButton(_G.AurasJournalAurasButton)
 	S:HandleEditBox(_G.AurasJournalSearchBox)
 	S:HandleScrollBar(_G.AurasJournalListScrollFrameScrollBar)
 	S:HandleRotateButton(AurasJournal.AurasDisplay.ModelFrame.RotateLeftButton)
@@ -607,10 +633,11 @@ end
 local function SkinCollectionsFrames()
 	S:HandlePortraitFrame_WCollections(_G.CollectionsJournal, true)
 
-	for i=1, 6 do
+	for i=1, 7 do
 		S:HandleTab(_G['CollectionsJournalTab'..i])
 	end
 
+	SkinNewsFrame()
 	SkinAurasFrame()
 	SkinMountFrame()
 	SkinPetFrame()

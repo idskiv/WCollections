@@ -15,8 +15,8 @@ function WardrobeFrame_OnLoad(self)
 	SetPortraitToTexture(WardrobeFramePortrait, [[Interface\AddOns\WCollections\Interface\Icons\INV_Arcane_Orb]]);
 	WardrobeFrameTitleText:SetText(TRANSMOGRIFY);
 	--WardrobeFrameTab5.isDisabled = true;
-	PanelTemplates_SetNumTabs(self, 6);
-	PanelTemplates_SetTab(self, 6);
+	PanelTemplates_SetNumTabs(self, 7);
+	PanelTemplates_SetTab(self, 7);
 end
 
 function WardrobeFrame_IsAtTransmogrifier()
@@ -143,7 +143,7 @@ function WardrobeTransmogFrame_OnEvent(self, event, ...)
 end
 
 function WardrobeTransmogFrame_OnShow(self)
-	WCollections:SetCVar("petJournalTab", 6);
+	WCollections:SetCVar("petJournalTab", 7);
 	WardrobeFramePortraitButton:UpdateVisibility();
 	CollectionsMicroButtonAlert:Hide();
 	WCollectionsMinimapHelpBox:Hide();

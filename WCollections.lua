@@ -438,7 +438,7 @@ function addon:OnInitialize()
                     },
                 },
             }, 
-			AurasJournal =
+            AurasJournal =
             {
                 PerCharacter =
                 {
@@ -1078,10 +1078,10 @@ function addon:OnInitialize()
             if CollectionsJournal:IsShown() or WardrobeFrame:IsShown() then
                 HideUIPanel(CollectionsJournal);
                 HideUIPanel(WardrobeFrame);
-            elseif action == 0 and WCollections:GetCVar("petJournalTab") ~= 6 then
+            elseif action == 0 and WCollections:GetCVar("petJournalTab") ~= 7 then
                 HideUIPanel(WardrobeFrame);
                 ToggleCollectionsJournal();
-            elseif action == 6 or (action == 0 and WCollections:GetCVar("petJournalTab") == 6) then
+            elseif action == 7 or (action == 0 and WCollections:GetCVar("petJournalTab") == 7) then
                 HideUIPanel(CollectionsJournal);
                 ShowUIPanel(WardrobeFrame);
             else
@@ -1133,7 +1133,7 @@ function addon:OnInitialize()
                 if button == "LeftButton" or button == "RightButton" then
                     local window = CollectionsJournal;
                     local tab ;
-                    for id = 1, 6 do
+                    for id = 1, 7 do
                         if _G["CollectionsJournalTab"..id] and _G["CollectionsJournalTab"..id].isDisabled then
                             tab = id;
                         end
@@ -1432,7 +1432,7 @@ function addon:OnInitialize()
                         order = 150.3,
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["toys"]); end,
                         dialogControl = "WCollectionsOptionsMediumButtonTemplate",
-                        hidden = function() return not _G["CollectionsJournalTab"..3] or _G["CollectionsJournalTab"..3].isDisabled; end,
+                        hidden = function() return not _G["CollectionsJournalTab"..5] or _G["CollectionsJournalTab"..5].isDisabled; end,
                     },
                     panelHeirlooms =
                     {
@@ -1441,7 +1441,7 @@ function addon:OnInitialize()
                         order = 150.4,
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["heirlooms"]); end,
                         dialogControl = "WCollectionsOptionsMediumButtonTemplate",
-                        hidden = function() return not _G["CollectionsJournalTab"..4] or _G["CollectionsJournalTab"..4].isDisabled; end,
+                        hidden = function() return not _G["CollectionsJournalTab"..6] or _G["CollectionsJournalTab"..6].isDisabled; end,
                     },
                     panelAppearances =
                     {
@@ -3982,10 +3982,10 @@ function addon:OnInitialize()
     AddPanel("mounts");
     AddPanel("auras");
     AddPanel("pets");
-    if _G["CollectionsJournalTab"..3] and not _G["CollectionsJournalTab"..3].isDisabled then
+    if _G["CollectionsJournalTab"..4] and not _G["CollectionsJournalTab"..4].isDisabled then
         AddPanel("toys");
     end
-    if _G["CollectionsJournalTab"..4] and not _G["CollectionsJournalTab"..4].isDisabled then
+    if _G["CollectionsJournalTab"..5] and not _G["CollectionsJournalTab"..5].isDisabled then
         AddPanel("heirlooms");
     end
     AddPanel("appearances");
@@ -5978,6 +5978,7 @@ WCollections =
         MOUNT_JOURNAL_SEARCH_UPDATED = { },
         MOUNT_JOURNAL_USABILITY_CHANGED = { },
         AURAS_JOURNAL_SEARCH_UPDATED = { },
+        NEWS_JOURNAL_SEARCH_UPDATED = { },
         PET_JOURNAL_SEARCH_UPDATED = { },
         TOYS_UPDATED = { }, -- itemID, new
 
@@ -6368,6 +6369,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             local actAura = strsplit(":", str);
             if(actAura) then
                 WCollections.ActiveVisualAura = actAura;
+                AurasJournal_UpdateAurasList();
             end;
         end
     end);

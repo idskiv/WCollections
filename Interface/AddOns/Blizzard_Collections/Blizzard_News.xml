@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-	<Script file="Blizzard_AurasCollection.lua"/>
+	<Script file="Blizzard_News.lua"/>
 
-    <Button name="AurasListButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+    <Button name="NewsListButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
         <Size x="208" y="46"/>
         <Layers>
             <Layer level="BACKGROUND">
@@ -16,15 +16,6 @@
                     <Anchors>
                         <Anchor point="LEFT" x="-42" y="0"/>
                     </Anchors>
-                </Texture>
-                <Texture parentKey="factionIcon">
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-1" y="1"/>
-                    </Anchors>
-                    <Size x="90" y="44"/>
-                </Texture>
-                <Texture parentKey="SubscriptionOverlay" file="Interface\AddOns\WCollections\Textures\MountSubscriptionOverlay" alphaMode="ADD" hidden="true">
-                    <TexCoords left="0.00390625" right="0.8203125" top="0.00390625" bottom="0.18359375"/>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="-1">
@@ -42,13 +33,6 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parenticon" x="10" y="-5"/>
                     </Anchors>
                 </FontString>
-                <Texture parentKey="favorite" atlas="PetJournal-FavoritesIcon" useAtlasSize="true" file="Interface\AddOns\WCollections\Interface\Common\FavoritesIcon">
-                    <Size x="25" y="25"/>
-                    <TexCoords left="0.03125" right="0.8125" top="0.03125" bottom="0.8125"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeTo="$parenticon" x="-8" y="8"/>
-                    </Anchors>
-                </Texture>
                 <Texture parentKey="unusable" hidden="true">
                     <Size x="38" y="38"/>
                     <Anchors>
@@ -94,15 +78,10 @@
                 </Layers>
                 <HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
                 <Scripts>
-                    <OnClick function="AurasListDragButton_OnClick"/>
-                    <OnDoubleClick function="AurasListDragButton_OnDoubleClick"/>
+                    <OnClick function="NewsListDragButton_OnClick"/>
+                    <OnDoubleClick function="NewsListDragButton_OnDoubleClick"/>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-                        local spellID = self:GetParent().spellID;
-                        if (spellID) then
-                            AurasJournalAurasButton_UpdateTooltip(self:GetParent());
-                            self.showingTooltip = true;
-                        end
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();
@@ -113,7 +92,7 @@
                         self:RegisterForDrag("LeftButton");
                     </OnLoad>
                     <OnDragStart>
-                        --C_AurasJournal.Pickup(self:GetParent().index);
+                        --C_NewsJournal.Pickup(self:GetParent().index);
                     </OnDragStart>
                 </Scripts>
             </Button>
@@ -123,20 +102,18 @@
         </HighlightTexture>
         <Scripts>
             <OnLoad>
-                Mixin(self.SubscriptionOverlay, SetShownMixin);
                 Mixin(self, SetEnabledMixin);
-                Mixin(self.factionIcon, SetAtlasMixin);
                 Mixin(self.new, SetShownMixin);
                 Mixin(self.newGlow, SetShownMixin);
                 Mixin(self.DragButton, SetEnabledMixin);
                 self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
             </OnLoad>
-            <OnMouseDown function="AurasListItem_OnClick"/>
-            <OnDoubleClick function="AurasListItem_OnDoubleClick"/>
+            <OnMouseDown function="NewsListItem_OnClick"/>
+            <OnDoubleClick function="NewsListItem_OnDoubleClick"/>
         </Scripts>
     </Button>
 
-	<Frame name="AurasJournal" parent="CollectionsJournal" setAllPoints="true">
+	<Frame name="NewsJournal" parent="CollectionsJournal" setAllPoints="true">
 		<Frames>
 			<Frame name="$parentLeftInset" parentKey="LeftInset" useParentLevel="true" inherits="InsetFrameTemplate">
 				<Size x="260" y="496"/>
@@ -157,32 +134,11 @@
 					<Anchor point="TOPLEFT" relativeTo="$parentLeftInset" x="15" y="-9"/>
 				</Anchors>
 				<Scripts>
-					<OnTextChanged function="AurasJournal_OnSearchTextChanged"/>
-					<OnHide function="AurasJournal_ClearSearch"/>
+					<OnTextChanged function="NewsJournal_OnSearchTextChanged"/>
+					<OnHide function="NewsJournal_ClearSearch"/>
 				</Scripts>
 			</EditBox>
-			<Frame name="$parentAurasCount" parentKey="AurasCount" useParentLevel="true" inherits="InsetFrameTemplate">
-				<Size x="130" y="20"/>
-				<Anchors>
-					<Anchor point="TOPLEFT" x="70" y="-35"/>
-				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<FontString name="$parentCount" parentKey="Count" inherits="GameFontHighlightSmall" justifyH="RIGHT">
-							<Anchors>
-								<Anchor point="RIGHT" x="-10" y="0"/>
-							</Anchors>
-						</FontString>
-						<FontString parentKey="Label" inherits="GameFontNormalSmall" text="TOTAL_AURAS" justifyH="LEFT">
-							<Anchors>
-								<Anchor point="LEFT" x="10" y="0"/>
-								<Anchor point="RIGHT" relativeTo="$parentCount" relativePoint="LEFT" x="-3" y="0"/>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-			</Frame>
-			<Frame parentKey="AurasDisplay">
+			<Frame parentKey="NewsDisplay">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentRightInset" relativePoint="TOPLEFT" x="3" y="-3"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$parentRightInset" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
@@ -194,6 +150,16 @@
 						</Texture>
 					</Layer>
 				</Layers>
+				<Animations>
+					<AnimationGroup parentKey="ModelAnimation" setToFinalAlpha="true" looping="none">
+						<Alpha duration="0" order="1" change="-1"/>
+							<Rotation childKey="NewsDisplay" duration="0" order="1" degrees="180"/>
+							<Translation parentKey="Translation" childKey="NewsDisplay" duration="2" order="1" offsetX="70" offsetY="0"/>
+							<Alpha childKey="NewsDisplay" duration="0.5" order="1" change="1"/>
+							<Alpha childKey="NewsDisplay" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+					</AnimationGroup>
+				</Animations>
+
 				<Frames>
 					<Frame parentKey="ShadowOverlay" inherits="ShadowOverlayTemplate" useParentLevel="true" setAllPoints="true"/>
 					<Button parentKey="InfoButton" motionScriptsWhileDisabled="true">
@@ -220,22 +186,10 @@
 										<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentIcon" x="10" y="0"/>
 									</Anchors>
 								</FontString>
-								<FontString name="$parentSubscriptionInfo" inherits="GameFontHighlight" justifyH="LEFT" parentKey="SubscriptionInfo">
+								<FontString name="$parentSource" inherits="GameFontNormal" justifyH="LEFT" parentKey="NewsText">
 									<Size x="345" y="0"/>
 									<Anchors>
-										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentIcon" x="0" y="-6"/>
-									</Anchors>
-								</FontString>
-								<FontString name="$parentSource" inherits="GameFontHighlight" justifyH="LEFT" parentKey="Source">
-									<Size x="345" y="0"/>
-									<Anchors>
-										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentSubscriptionInfo"/>
-									</Anchors>
-								</FontString>
-								<FontString name="$parentLore" inherits="GameFontNormal" justifyH="LEFT" parentKey="Lore">
-									<Size x="345" y="0"/>
-									<Anchors>
-										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentSource"/>
+										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentIcon" x="0" y="-20"/>
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -259,95 +213,6 @@
 							</Layer>
 						</Layers>
 					</Button>
-
-					<PlayerModel parentKey="ModelWithControlsTemplate" useParentLevel="true" inherits="ModelWithZoomTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" x="0" y="-120"/>
-							<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-						</Anchors>
-						<Frames>
-							<Frame name="$parentControlFrame" parentKey="controlFrame" alpha="1.0" hidden="false">
-								<Size x="112" y="23"/>
-								<Anchors>
-									<Anchor point="TOP" x="0" y="-300"/>
-								</Anchors>
-							<Frames>
-								<Button name="$parentAuraPanButton" inherits="ModelControlButtonTemplate" parentKey="auraPanButton">
-									<Size x="35" y="35"/>
-									<Anchors>
-										<Anchor point="TOPRIGHT" relativePoint="BOTTOM" x="18" y="0"/>
-									</Anchors>
-									<Scripts>
-										<OnLoad>
-											self:RegisterForClicks("AnyUp");
-											self.icon:SetTexCoord(0.29687500, 0.54687500, 0.28906250, 0.41406250);
-											self.tooltip = DRAG_MODEL;
-											self.tooltipText = DRAG_AURA_TOOLTIP;
-										</OnLoad>
-										<OnMouseDown>
-											ModelControlButton_OnMouseDown(self);
-											Model_StartPanning(self:GetParent():GetParent(), true);
-										</OnMouseDown>
-										<OnMouseUp>
-											PlaySound("igInventoryRotateCharacter");
-										</OnMouseUp>
-									</Scripts>
-								</Button>
-							</Frames>
-							</Frame>
-						</Frames>
-						<Scripts>
-							<OnLoad function="Model_OnLoad"/>
-							<OnEvent function="Model_OnEvent"/>
-							<OnUpdate function="Model_OnUpdate"/>
-							<OnMouseUp>
-								if ( button == "RightButton" and self.panning ) then
-									Model_StopPanning(self);
-								elseif ( self.mouseDown ) then
-									self.onMouseUpFunc(self, button);
-								end
-							</OnMouseUp>
-							<OnMouseDown>
-								if ( button == "RightButton" and not self.mouseDown ) then
-									Model_StartPanning(self);
-								else
-									Model_OnMouseDown(self, button);
-								end
-							</OnMouseDown>
-							<OnMouseWheel>
-								Model_OnMouseWheel(self, delta);
-							</OnMouseWheel>
-							<OnEnter>
-								self.controlFrame:Show();
-							</OnEnter>
-							<OnLeave>
-							</OnLeave>
-							<OnHide function="Model_OnHide"/>
-							</Scripts>
-					</PlayerModel>
-					<Frame name="ModelPanningFrame" parent="UIParent" hidden="true" frameStrata="DIALOG" clampedToScreen="true" enableMouse="true">
-						<Size x="32" y="32"/>
-						<Layers>
-							<Layer level="ARTWORK">
-								<Texture file="Interface\AddOns\WCollections\Interface\Cursor\UI-Cursor-Move" setAllPoints="true"/>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnUpdate>
-								local model = self.model;
-								local controlFrame = model.controlFrame;
-								if ( not IsMouseButtonDown(controlFrame.auraPanButton) ) then
-									Model_StopPanning(model);
-									if ( controlFrame.buttonDown ) then
-										ModelControlButton_OnMouseUp(controlFrame.buttonDown);
-									end
-									if ( not controlFrame:IsMouseOver() ) then
-										controlFrame:Hide();
-									end
-								end
-							</OnUpdate>
-						</Scripts>
-					</Frame>
 				</Frames>
 			</Frame>
 			<!--Name needed for HybridScrollFrameTemplate-->
@@ -371,64 +236,11 @@
 					</Slider>
 				</Frames>
 			</ScrollFrame>
-			<Button parentKey="AurasButton" name="$parentAurasButton" inherits="MagicButtonTemplate" text="">
-				<Size x="140" y="22"/>
-				<Anchors>
-					<Anchor point="BOTTOMLEFT"/>
-				</Anchors>
-				<Frames>
-					<Button parentKey="SubscriptionOverlay" hidden="true">
-						<Size x="16" y="16" />
-						<Anchors>
-							<Anchor point="LEFT" relativePoint="RIGHT" x="-2" y="-1" />
-						</Anchors>
-						<NormalTexture file="Interface\AddOns\WCollections\Textures\SubscriptionOverlay" setAllPoints="true">
-							<TexCoords left="0.00390625" right="0.06640625" top="0.8515625" bottom="0.9765625" />
-						</NormalTexture>
-						<HighlightTexture file="Interface\AddOns\WCollections\Textures\SubscriptionOverlay" setAllPoints="true" alphaMode="ADD" alpha="0.4">
-							<TexCoords left="0.07421875" right="0.13671875" top="0.8515625" bottom="0.9765625" />
-						</HighlightTexture>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<Texture file="Interface\AddOns\WCollections\Textures\AurasSubscriptionOverlay" alphaMode="ADD">
-									<Size x="96" y="64" />
-									<Anchors>
-										<Anchor point="RIGHT" x="11" y="0" />
-									</Anchors>
-									<TexCoords left="0" right="0.375" top="0.25" bottom="0.5" />
-								</Texture>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								Mixin(self, SetShownMixin);
-							</OnLoad>
-							<OnEnter>
-
-							</OnEnter>
-							<OnLeave function="GameTooltip_Hide" />
-						</Scripts>
-					</Button>
-				</Frames>
-				<Scripts>
-					<OnClick function="AurasJournalAurasButton_OnClick"/>
-				</Scripts>
-			</Button>
-			<Button parentKey="AurasButton2" name="$parentAurasButton2" inherits="MagicButtonTemplate" text="AURA_TEST">
-				<Size x="160" y="22"/>
-				<Anchors>
-					<Anchor point="BOTTOMLEFT"  x="150" y="4" />
-				</Anchors>
-				<Scripts>
-					<OnClick function="AurasJournalAurasButton2_OnClick"/>
-				</Scripts>
-			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad function="AurasJournal_OnLoad"/>
-			<OnEvent function="AurasJournal_OnEvent"/>
-			<OnShow function="AurasJournal_OnShow"/>
-			<OnHide function="AurasJournal_OnHide"/>
+			<OnLoad function="NewsJournal_OnLoad"/>
+			<OnEvent function="NewsJournal_OnEvent"/>
+			<OnShow function="NewsJournal_OnShow"/>
 		</Scripts>
 	</Frame>
 </Ui>

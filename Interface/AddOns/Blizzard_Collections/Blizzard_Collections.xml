@@ -5,7 +5,7 @@
 	<Button name="CollectionsJournalTab" inherits="CharacterFrameTabButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
-				if self:GetID() == 6 and self:GetParent() == CollectionsJournal then
+				if self:GetID() == 7 and self:GetParent() == CollectionsJournal then
 					HideUIPanel(CollectionsJournal);
 					local config = WCollections.Config.Windows[self:GetParent():GetName()];
 					if not config.Layout and not config.Lock then
@@ -16,7 +16,7 @@
 					ShowUIPanel(WardrobeFrame);
 					WCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_WCOLLECTIONS_TRANSMOG_TAB, true);
 					return;
-				elseif self:GetID() ~= 6 and self:GetParent() == WardrobeFrame then
+				elseif self:GetID() ~= 7 and self:GetParent() == WardrobeFrame then
 					HideUIPanel(WardrobeFrame);
 					local config = WCollections.Config.Windows[self:GetParent():GetName()];
 					if not config.Layout and not config.Lock then
@@ -156,34 +156,39 @@
 					</OnShow>
 				</Scripts>
 			</Frame>
-			<Button name="$parentTab1" inherits="CollectionsJournalTabCutoff" text="MOUNTS" id="1">
+			<Button name="$parentTab1" inherits="CollectionsJournalTabCutoff" text="NEWS" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="11" y="2"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab2" inherits="CollectionsJournalTabCutoff" text="AURAS" id="2">
+			<Button name="$parentTab2" inherits="CollectionsJournalTabCutoff" text="MOUNTS" id="2">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab3" inherits="CollectionsJournalTabCutoff" text="COMPANIONS" id="3">
+			<Button name="$parentTab3" inherits="CollectionsJournalTabCutoff" text="AURAS" id="3">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab4" inherits="CollectionsJournalTabCutoff" text="TOY_BOX" id="4">
+			<Button name="$parentTab4" inherits="CollectionsJournalTabCutoff" text="COMPANIONS" id="4">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab5" inherits="CollectionsJournalTab" text="WARDROBE" id="5">
+			<Button name="$parentTab5" inherits="CollectionsJournalTabCutoff" text="TOY_BOX" id="5">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" x="-16" y="0"/>
 				</Anchors>
 			</Button>
-			<Button name="$parentTab6" inherits="CollectionsJournalTab" text="TRANSMOGRIFY" id="6">
+			<Button name="$parentTab6" inherits="CollectionsJournalTab" text="WARDROBE" id="6">
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="0" y="0"/>
+					<Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="-16" y="0"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab7" inherits="CollectionsJournalTab" text="TRANSMOGRIFY" id="7">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" x="0" y="0"/>
 				</Anchors>
 			</Button>
 			<Frame name="$parentTransmogTabHelpBox" parentKey="TransmogTabHelpBox" inherits="GlowBoxTemplate" enableMouse="true" frameStrata="DIALOG">
@@ -242,11 +247,11 @@
 			<OnLoad>
 				CollectionsJournalTitleText:SetText(COLLECTIONS);
 				SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\WCollections\Interface\Icons\MountJournalPortrait]]);
-				--CollectionsJournalTab5.isDisabled = true;
-				PanelTemplates_SetNumTabs(self, 6);
+
+				PanelTemplates_SetNumTabs(self, 7);
 
 				-- Moved to WCollections's OnInitialize to have CVars loaded
-				-- PanelTemplates_SetTab(self, tonumber(WCollections:GetCVar("petJournalTab")) or 5);
+				-- PanelTemplates_SetTab(self, tonumber(WCollections:GetCVar("petJournalTab")) or 7);
 			</OnLoad>
 			<OnShow function="CollectionsJournal_OnShow"/>
 			<OnHide function="CollectionsJournal_OnHide"/>
