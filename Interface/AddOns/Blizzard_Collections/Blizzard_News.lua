@@ -1,4 +1,5 @@
 local NEWS_BUTTON_HEIGHT = 46;
+local AddNewsPanelVisible = false;
 
 function NewsJournal_OnLoad(self)
 	Mixin(self, SetShownMixin);
@@ -6,6 +7,7 @@ function NewsJournal_OnLoad(self)
 	WCollections:RegisterEvent(self, "NEWS_JOURNAL_SEARCH_UPDATED");
 	self.ListScrollFrame.update = NewsJournal_UpdateNewsList;
 	self.ListScrollFrame.scrollBar.doNotHide = true;
+	
 	HybridScrollFrame_CreateButtons(self.ListScrollFrame, "NewsListButtonTemplate", 44, 0);
 end
 
@@ -117,7 +119,7 @@ function NewsJournal_UpdateNewsDisplay()
 	if ( NewsJournal.selectedNewsID ) then
 		local Title, _NewsID, Text, icon, isPublic = C_NewsJournal.GetNewsInfoByID(NewsJournal.selectedNewsID);
 		if Title then
-			NewsJournal.NewsDisplay.InfoButton.Name:SetText(Title);
+			NewsJournal.NewsDisplay.InfoButton.Title:SetText(Title);
 			NewsJournal.NewsDisplay.InfoButton.New:Hide();
 			NewsJournal.NewsDisplay.InfoButton.NewGlow:Hide();
 			NewsJournal.NewsDisplay.InfoButton.Icon:SetTexture(icon);
@@ -126,7 +128,7 @@ function NewsJournal_UpdateNewsDisplay()
 		end
 
 		NewsJournal.NewsDisplay.InfoButton:Show();
-		AurasJournal.AurasDisplay.YesAurasTex:Show();
+		NewsJournal.NewsDisplay.YesAurasTex:Show();
 	else
 		NewsJournal.NewsDisplay.InfoButton:Hide();
 	end
@@ -159,4 +161,48 @@ end
 
 function NewsJournal_ClearSearch()
 	NewsJournal.searchBox:SetText("");
+end
+
+local ManualBackdrop = {
+	bgFile = "Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background2",
+	edgeFile = "",
+	tile = false,
+}
+
+function AddNewsPanel_OnLoad(self)
+	AddNewsPanel_Send:SetFrameLevel(self:GetFrameLevel() + 1);
+	AddNewsPanel_NewsTitle:SetFrameLevel(self:GetFrameLevel() + 1);
+	AddNewsPanel_NewsText:SetMultiLine(true);
+	AddNewsPanel_NewsText:SetBackdrop(ManualBackdrop);
+	AddNewsPanel_NewsText:SetBackdropColor(1, 1, 1, 1);
+	AddNewsPanel_NewsText:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.3);
+
+	local text = "";
+	for i=1,33 do
+    	text = text.."\n";
+	end
+	AddNewsPanel_NewsText:SetText(text);
+
+	AddNewsPanel_NewsTitle:SetMultiLine(true);
+	AddNewsPanel_NewsTitle:SetHeight(54);
+	AddNewsPanel_NewsTitle:SetBackdrop(ManualBackdrop);
+	AddNewsPanel_NewsTitle:SetBackdropColor(1, 1, 1, 1);
+	AddNewsPanel_NewsTitle:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.3);
+	
+	
+	local Scroll = CreateFrame('ScrollFrame', 'AddNewsPanelScroll', AddNewsPanel_AddNewsTextZone, 'UIPanelScrollFrameTemplate')
+	Scroll:SetPoint('TOPLEFT', AddNewsPanel_AddNewsTextZone, 'TOPLEFT', 8, -30)
+	Scroll:SetPoint('BOTTOMRIGHT', AddNewsPanel_AddNewsTextZone, 'BOTTOMRIGHT', -30, 8)
+	Scroll:SetScrollChild(AddNewsPanel_NewsText);
+end
+
+function AddNewsButton_OnClick()
+	if(AddNewsPanelVisible) then
+		AddNewsPanel:Hide();
+		AddNewsPanelVisible = false;
+	else
+		AddNewsPanel:SetPoint("TOPRIGHT", "CollectionsJournal", "TOPRIGHT",600, 0);
+		AddNewsPanel:Show();
+		AddNewsPanelVisible = true;
+	end
 end

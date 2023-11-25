@@ -113,7 +113,7 @@
         </Scripts>
     </Button>
 
-	<Frame name="NewsJournal" parent="CollectionsJournal" setAllPoints="true">
+	<Frame name="NewsJournal" parent="CollectionsJournal" setAllPoints="true" EnableMouse="true" >
 		<Frames>
 			<Frame name="$parentLeftInset" parentKey="LeftInset" useParentLevel="true" inherits="InsetFrameTemplate">
 				<Size x="260" y="496"/>
@@ -145,24 +145,28 @@
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<Texture parentKey="YesAurasTex" file="Interface\AddOns\WCollections\Interface\PetBattles\MountJournal-BG" setAllPoints="true">
-							<TexCoords left="0" right="0.78515625" top="0" bottom="1"/>
+						<Texture parentKey="YesAurasTex" file="Interface\AddOns\WCollections\Interface\PetBattles\news_background2" setAllPoints="true">
+							<TexCoords left="0" right="1" top="0" bottom="1"/>
 						</Texture>
 					</Layer>
 				</Layers>
-				<Animations>
-					<AnimationGroup parentKey="ModelAnimation" setToFinalAlpha="true" looping="none">
-						<Alpha duration="0" order="1" change="-1"/>
-							<Rotation childKey="NewsDisplay" duration="0" order="1" degrees="180"/>
-							<Translation parentKey="Translation" childKey="NewsDisplay" duration="2" order="1" offsetX="70" offsetY="0"/>
-							<Alpha childKey="NewsDisplay" duration="0.5" order="1" change="1"/>
-							<Alpha childKey="NewsDisplay" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
-					</AnimationGroup>
-				</Animations>
 
 				<Frames>
-					<Frame parentKey="ShadowOverlay" inherits="ShadowOverlayTemplate" useParentLevel="true" setAllPoints="true"/>
-					<Button parentKey="InfoButton" motionScriptsWhileDisabled="true">
+					<Frame parentKey="ShadowOverlay" inherits="ShadowOverlayTemplate" useParentLevel="true" setAllPoints="true" />
+					<EditBox name="$parentSource2"  parentKey="NewsAdd" inherits = "NewsAdd_Input_Text">
+						<Size>
+							<AbsDimension x="345" y="300"/>
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER" relativeTo = "InfoButton">
+								<Offset>
+									<AbsDimension x="50" y="-200"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<FontString name="$parentText" inherits="GameFontBlackMedium" text="ADD_NEWS" justifyH="CENTER" />
+					</EditBox>
+					<ScrollFrame parentKey="InfoButton" >
 						<KeyValues>
 							<KeyValue key="hasIconHyperlinks" value="true" type="boolean"/>
 						</KeyValues>
@@ -170,6 +174,16 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" x="6" y="-6"/>
 						</Anchors>
+						<Slider name="$parentnewsScrollBar" inherits="OptionsSliderTemplate" parentKey="newsScrollBar">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="4" y="20"/>
+								<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="4" y="11"/>
+							</Anchors>
+							<Scripts>
+								<OnLoad>
+								</OnLoad>
+							</Scripts>
+						</Slider>
 						<Layers>
 							<Layer level="BORDER">
 								<Texture name="$parentIcon" parentKey="Icon">
@@ -180,18 +194,59 @@
 								</Texture>
 							</Layer>
 							<Layer level="OVERLAY">
-								<FontString name="$parentName" inherits="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" parentKey="Name" maxLines="2">
+								<FontString name="$parentName" inherits="GameFontBlackMedium" justifyH="LEFT" justifyV="MIDDLE" parentKey="Title" maxLines="2">
 									<Size x="270" y="35"/>
 									<Anchors>
 										<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentIcon" x="10" y="0"/>
 									</Anchors>
 								</FontString>
-								<FontString name="$parentSource" inherits="GameFontNormal" justifyH="LEFT" parentKey="NewsText">
+
+								<Texture parentKey="$parentURL" file="Interface\AddOns\WCollections\Interface\PetBattles\url_ico" alphaMode="ADD">
+									<Size x="24" y="24"/>
+									<Anchors>
+										<Anchor point="LEFT" relativeTo="$parentName" x="180" y="0"/>
+									</Anchors>
+									<Scripts>
+										<OnClick>
+											PlaySound("igInventoryRotateCharacter");
+										</OnClick>
+										<OnDoubleClick function=""/>
+										<OnEnter>
+										PlaySound("igInventoryRotateCharacter");
+										</OnEnter>
+										<OnLeave>
+										</OnLeave>
+										<OnLoad>
+										</OnLoad>
+									</Scripts>
+								</Texture>
+
+								<Button parentKey="$parentUrlButton" motionScriptsWhileDisabled="true" name = "UrlButton"  text="">
+									<Size x="24" y="24"/>
+									<Anchors>
+										<Anchor point="LEFT" relativeTo="$parentName" x="200" y="0"/>
+									</Anchors>
+
+									<Texture file="Interface\AddOns\WCollections\Interface\PetBattles\url_ico" parentKey="ActiveTexture" alphaMode="ADD"/>
+
+									<Scripts>
+										<OnClick function=""/>
+										<OnDoubleClick function=""/>
+										<OnEnter>
+										</OnEnter>
+										<OnLeave>
+										</OnLeave>
+										<OnLoad>
+										</OnLoad>
+									</Scripts>
+								</Button>
+								<FontString name="$parentSource" inherits="GameFontBlackMedium" justifyH="LEFT" parentKey="NewsText">
 									<Size x="345" y="0"/>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentIcon" x="0" y="-20"/>
 									</Anchors>
 								</FontString>
+
 							</Layer>
 							<Layer level="OVERLAY" textureSubLevel="2">
 								<FontString name="$parentNew" parentKey="New" inherits="GameFontHighlight" wordwrap="false" justifyH="CENTER" text="NEW_CAPS" hidden="true">
@@ -212,7 +267,7 @@
 								</Texture>
 							</Layer>
 						</Layers>
-					</Button>
+					</ScrollFrame>
 				</Frames>
 			</Frame>
 			<!--Name needed for HybridScrollFrameTemplate-->
@@ -231,11 +286,24 @@
 							<OnLoad>
 								self.trackBG:Show();
 								self.trackBG:SetVertexColor(0, 0, 0, 0.75);
+								
 							</OnLoad>
 						</Scripts>
 					</Slider>
 				</Frames>
 			</ScrollFrame>
+			<Button parentKey="AddNewsButton" name="$parentAurasButton" inherits="MagicButtonTemplate" text="ADD_NEWS">
+				<Size x="140" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT"/>
+				</Anchors>
+				<Frames>
+
+				</Frames>
+				<Scripts>
+					<OnClick function="AddNewsButton_OnClick"/>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad function="NewsJournal_OnLoad"/>
@@ -243,4 +311,177 @@
 			<OnShow function="NewsJournal_OnShow"/>
 		</Scripts>
 	</Frame>
+
+<!--Templates-->
+	<Button name="NewsAddTemplate" virtual="true" toplevel="false" frameStrata="HIGH" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+	   <Frames>
+		  <Frame name="$parent_Title">
+			 <Size>
+				<AbsDimension x="160" y="9" />
+			 </Size>
+			 <Anchors>
+				<Anchor point="TOP" />
+			 </Anchors>
+			 <Layers>
+				<Layer level="ARTWORK">
+				   <Texture name="$parentTitleBorder" file="Interface\DialogFrame\UI-DialogBox-Header">
+					  <Size>
+						 <AbsDimension x="160" y="32" />
+					  </Size>
+					  <Anchors>
+						 <Anchor point="TOP">
+							<Offset>
+							   <AbsDimension x="0" y="10" />
+							</Offset>
+						 </Anchor>
+					  </Anchors>
+					  <TexCoords left="0.2" right="0.8" top="0" bottom="0.7" />
+				   </Texture>
+				   <FontString name="$parentText" inherits="GameFontNormal" text="ADD_NEWS" justifyH="CENTER" />
+				</Layer>
+			 </Layers>
+		  </Frame>
+
+		  <Frame name="$parent_Main" frameLevel="-1">
+			 <Size>
+				<AbsDimension x="600" y="600" />
+			 </Size>
+			 <Anchors>
+				<Anchor point="TOP">
+				   <Offset>
+					  <AbsDimension x="-1" y="-12" />
+				   </Offset>
+				</Anchor>
+			 </Anchors>
+			 <Backdrop edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+				<BackgroundInsets>
+				   <AbsInset left="5" right="5" top="200" bottom="5" />
+				</BackgroundInsets>
+				<TileSize>
+				   <AbsValue val="25" />
+				</TileSize>
+				<EdgeSize>
+				   <AbsValue val="25" />
+				</EdgeSize>
+			 </Backdrop>
+			 <Layers>
+				<Layer level="BACKGROUND">
+				   <Texture name="A$parentScrollBarTop" file="Interface/RAIDFRAME/UI-RaidFrame-GroupBg.png">
+					  <Size>
+						 <AbsDimension x="230" y="210" />
+					  </Size>
+					  <Anchors>
+						 <Anchor point="BUTTOM">
+							<Offset>
+							   <AbsDimension x="8" y="-5" />
+							</Offset>
+						 </Anchor>
+					  </Anchors>
+				   </Texture>
+				</Layer>
+			 </Layers>
+		  </Frame>
+	   </Frames>
+	   <Scripts>
+		  <OnMouseDown>self:StartMoving();</OnMouseDown>
+		  <OnMouseUp>self:StopMovingOrSizing();</OnMouseUp>
+		  <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
+	   </Scripts>
+	</Button>
+
+	<EditBox name="NewsAdd_Input_Text" enableMouse="true" virtual="true" frameStrata="DIALOG" autoFocus="false" >
+        <Size>
+            <AbsDimension x="100" y="500"/>
+        </Size>
+        <Backdrop bgFile="Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background2"
+                          edgeFile="" tile="true">
+
+                    <EdgeSize>
+                        <AbsValue val="64"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="62"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="3" right="3" top="3" bottom="3"/>
+                    </BackgroundInsets>
+                </Backdrop>
+        <Scripts>
+            <OnLoad>
+                --self:SetTextInsets(5, 5, 0, 2);
+                --self:SetBackdropColor(0,0,0);
+            </OnLoad>
+            <OnEnterPressed>
+                self:ClearFocus();
+            </OnEnterPressed>
+            <OnEscapePressed>
+                self:ClearFocus();
+            </OnEscapePressed>
+        </Scripts>
+        <FontString inherits="GameFontBlack"/>
+    </EditBox>
+
+	<Button name="AddNewsPanel" inherits="NewsAddTemplate" hidden="true" toplevel="false">
+        <Size x="600" y="600"/>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativeTo="CollectionsJournal" relativePoint="BOTTOMRIGHT"/>
+        </Anchors>
+
+        <Frames>
+			<Frame name="$parent_AddNewsTextZone" parentKey="AddNewsTextZone" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Size x="500" y="500"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="20" y="-100" />
+					<Anchor point="BOTTOMLEFT" x="20" y="52" />
+				</Anchors>
+
+			</Frame>
+			<Button name="$parent_Send" inherits="MagicButtonTemplate" text="SEND_NEWS" toplevel="true">
+                <Size x="140" y="28"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeTo="AddNewsPanel" relativePoint="BOTTOMLEFT" x="30" y="10"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        
+                    </OnClick>
+                </Scripts>
+            </Button>
+			<EditBox name="$parent_NewsTitle" inherits = "NewsAdd_Input_Text">
+				<Size>
+					<AbsDimension x="260" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo = "AddNewsPanel">
+						<Offset>
+							<AbsDimension x="30" y="-75"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</EditBox>
+
+				<EditBox name="$parent_NewsText" inherits = "NewsAdd_Input_Text">
+					<Size>
+						<AbsDimension x="450" y="500"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo = "$parent_AddNewsTextZone">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</EditBox>
+
+
+        </Frames>
+		
+		<Scripts>
+			<OnLoad function="AddNewsPanel_OnLoad"/>
+            <OnDoubleClick>
+                self:ClearAllPoints();
+                self:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT");
+            </OnDoubleClick>
+        </Scripts>
+    </Button>
 </Ui>
