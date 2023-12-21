@@ -577,6 +577,7 @@ L["Toy.Subscription.Info"]                              = "Подписка"
 L["Toy.Subscription.Details.Info"]                      =[[|TInterface\AddOns\WCollections\Textures\SubscriptionOverlay:22:22:0:0:256:128:1:17:109:126|t|cFF00C0FF Доступна по подписке|r]]
 L["Misc.WintergraspButton.CanQueue"]                    = "|cffffffffВы можете занять место в очереди на участие в битве на |nОзере Ледяных Оков. Нажмите для входа в очередь.|r"
 L["Tutorial.MicroButton"]                               = "Нажмите здесь для просмотра коллекций."
+L["Tutorial.NewNews"]                                   = "Для вас есть свежие новости."
 L["Tutorial.PortraitButton"]                            = "Нажмите здесь для переключения между коллекцией моделей и трансмогрификацией."
 L["Tutorial.TransmogTab"]                               = "Нажмите здесь для доступа к трансмогрификации."
 L["Addon.Blizzard_TradeSkillUI.RecipeIconPlacement"]    = "Иконка в списке рецептов"

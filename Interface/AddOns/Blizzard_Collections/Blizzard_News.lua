@@ -1,5 +1,15 @@
 local NEWS_BUTTON_HEIGHT = 46;
 local AddNewsPanelVisible = false;
+local waitingForPin = false;
+local accountLevel = 0;
+
+local newsTypeStrings = {
+	[0] = NEWS_JOURNAL_FILTER_REGULAR,
+	[1] = NEWS_JOURNAL_FILTER_MAINTENANCE,
+	[2] = NEWS_JOURNAL_FILTER_UPDATES,
+	[3] = NEWS_JOURNAL_FILTER_CUSTOM,
+	[4] = NEWS_JOURNAL_FILTER_FEATURE,
+};
 
 function NewsJournal_OnLoad(self)
 	Mixin(self, SetShownMixin);
@@ -29,6 +39,13 @@ function NewsJournal_OnShow(self)
 		NewsJournal_Select(1);
 	end
 	NewsJournal_UpdateNewsDisplay();
+
+	if(WCollections:GetAccountLevel() > 2) then
+		NewsJournalAddNewsButton:Show();
+		NewsJournalEditNewsButton:Show();
+		NewsJournalDelNewsButton:Show();
+	end
+
 	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\Icons\inv_scroll_06]]);
 	-- Fix frame levels
 	self.LeftInset:SetFrameLevel(self:GetFrameLevel() + 1);
@@ -36,6 +53,7 @@ function NewsJournal_OnShow(self)
 	self.searchBox:SetFrameLevel(self:GetFrameLevel() + 2);
 	self.NewsDisplay:SetFrameLevel(self:GetFrameLevel() + 2);
 	self.ListScrollFrame:SetFrameLevel(self:GetFrameLevel() + 2);
+	NewsJournalFilterButton:SetFrameLevel(self:GetFrameLevel() + 2);
 end
 
 function NewsJournal_UpdateNewsList()
@@ -47,18 +65,35 @@ function NewsJournal_UpdateNewsList()
 	local showNews = true;
 	local playerLevel = UnitLevel("player");
 
+	if  ( numNews < 1 ) then
+		NewsJournal.NewsDisplay.NoNews:Show();
+		showNews = false;
+	else
+		NewsJournal.NewsDisplay.NoNews:Hide();
+	end
+
 	local numDisplayedNews = C_NewsJournal.GetNumDisplayedNews();
 	for i=1, #buttons do
 		local button = buttons[i];
 		local displayIndex = i + offset;
 		if ( displayIndex <= numDisplayedNews and showNews ) then
 			local index = displayIndex;
-			local Title, _NewsID, Text, icon, isPublic = C_NewsJournal.GetDisplayedNewsInfo(index);
+			local _, _, _NewsID, _, _, _ = C_NewsJournal.GetDisplayedNewsInfo(index);
+			local Date, Title, _NewsID, Text, icon, Type, isPublic = C_NewsJournal.GetNewsInfoByID(_NewsID);
+			local needsFanFare = C_NewsJournal.NeedsFanfare(_NewsID);
+			local le_pipiska = true;
 
-			button.name:SetText(Title);
+			button.title:SetText(dec(Title));
 			button.icon:SetTexture(icon); 
-			button.new:SetShown(false);
-			button.newGlow:SetShown(false);
+			if(isPublic == 0) then
+				button.new:SetText("8==>");
+				button.new:SetShown(le_pipiska);
+				button.newGlow:SetShown(le_pipiska);
+			else
+				button.new:SetText(NEW_CAPS);
+				button.new:SetShown(needsFanFare);
+				button.newGlow:SetShown(needsFanFare);
+			end
 			NewsJournal.NewsDisplay.InfoButton.New:Hide();
 			NewsJournal.NewsDisplay.InfoButton.NewGlow:Hide();
 
@@ -80,12 +115,12 @@ function NewsJournal_UpdateNewsList()
 			button.iconBorder:Hide();
 			button.background:SetVertexColor(1, 1, 1, 1);
 			button.DragButton:SetEnabled(true);
-			button.name:SetFontObject("GameFontNormal");
+			button.title:SetFontObject("GameFontNormal");
 			button.icon:SetAlpha(0.75);
 			button.additionalText = nil;
 			button.background:SetVertexColor(1, 0, 0, 1);
 		else
-			button.name:SetText("");
+			button.title:SetText("");
 			button.icon:SetTexture([[Interface\Icons\Trade_Engineering]]);
 			button.new:Hide();
 			button.newGlow:Hide();
@@ -115,15 +150,23 @@ end
 
 
 function NewsJournal_UpdateNewsDisplay()
-	C_NewsJournal.GetNewsList();
 	if ( NewsJournal.selectedNewsID ) then
-		local Title, _NewsID, Text, icon, isPublic = C_NewsJournal.GetNewsInfoByID(NewsJournal.selectedNewsID);
-		if Title then
-			NewsJournal.NewsDisplay.InfoButton.Title:SetText(Title);
+		local Date, Title, _NewsID, Text, icon, isPublic = C_NewsJournal.GetNewsInfoByID(NewsJournal.selectedNewsID);
+		if Title and Text then
+			local server_time = time();
+			server_time = tonumber(server_time);
+			NewsJournal.NewsDisplay.InfoButton.Title:SetFontObject("GameFontBlackMedium");
+			NewsJournal.NewsDisplay.InfoButton.Title:SetText(dec(Title));
 			NewsJournal.NewsDisplay.InfoButton.New:Hide();
 			NewsJournal.NewsDisplay.InfoButton.NewGlow:Hide();
 			NewsJournal.NewsDisplay.InfoButton.Icon:SetTexture(icon);
-			NewsJournal.NewsDisplay.InfoButton.NewsText:SetText(Text);
+			NewsJournal_NewsText:Hide();
+			local decText = dec(Text);
+			NewsTextPanelScroll:SetScrollChild(NewsJournal_NewsText);
+			NewsJournal_NewsText:SetText(decText);
+			NewsJournal.NewsDisplay.InfoButton.Title:Show();
+			NewsJournal_NewsText:Show();
+
 			NewsJournal.NewsDisplay.lastDisplayed = _NewsID;
 		end
 
@@ -131,14 +174,20 @@ function NewsJournal_UpdateNewsDisplay()
 		NewsJournal.NewsDisplay.YesAurasTex:Show();
 	else
 		NewsJournal.NewsDisplay.InfoButton:Hide();
+		NewsJournal.NewsDisplay.InfoButton.Title:Hide();
+		NewsJournal.NewsDisplay.NoNews:Show();
+		NewsJournal_NewsText:Hide();
 	end
 end
 
 function NewsJournal_Select(index)
-	local NewsName, _NewsID = C_NewsJournal.GetDisplayedNewsInfo(index);
+	local _, Title, _NewsID = C_NewsJournal.GetDisplayedNewsInfo(index);
 
 	NewsJournal.selectedNewsID = _NewsID;
 	NewsJournal.selectedNewsID = _NewsID;
+	if(_NewsID ~= nil) then
+		C_NewsJournal.ClearFanfare(_NewsID);
+	end
 	NewsJournal_UpdateNewsList();
 	NewsJournal_UpdateNewsDisplay();
 end
@@ -164,45 +213,257 @@ function NewsJournal_ClearSearch()
 end
 
 local ManualBackdrop = {
-	bgFile = "Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background2",
+	bgFile = "Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background",
 	edgeFile = "",
 	tile = false,
 }
 
 function AddNewsPanel_OnLoad(self)
-	AddNewsPanel_Send:SetFrameLevel(self:GetFrameLevel() + 1);
-	AddNewsPanel_NewsTitle:SetFrameLevel(self:GetFrameLevel() + 1);
-	AddNewsPanel_NewsText:SetMultiLine(true);
-	AddNewsPanel_NewsText:SetBackdrop(ManualBackdrop);
-	AddNewsPanel_NewsText:SetBackdropColor(1, 1, 1, 1);
-	AddNewsPanel_NewsText:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.3);
 
-	local text = "";
-	for i=1,33 do
-    	text = text.."\n";
-	end
-	AddNewsPanel_NewsText:SetText(text);
-
-	AddNewsPanel_NewsTitle:SetMultiLine(true);
-	AddNewsPanel_NewsTitle:SetHeight(54);
 	AddNewsPanel_NewsTitle:SetBackdrop(ManualBackdrop);
 	AddNewsPanel_NewsTitle:SetBackdropColor(1, 1, 1, 1);
-	AddNewsPanel_NewsTitle:SetBackdropBorderColor(0.3, 0.3, 0.3, 0.3);
-	
-	
-	local Scroll = CreateFrame('ScrollFrame', 'AddNewsPanelScroll', AddNewsPanel_AddNewsTextZone, 'UIPanelScrollFrameTemplate')
-	Scroll:SetPoint('TOPLEFT', AddNewsPanel_AddNewsTextZone, 'TOPLEFT', 8, -30)
-	Scroll:SetPoint('BOTTOMRIGHT', AddNewsPanel_AddNewsTextZone, 'BOTTOMRIGHT', -30, 8)
+	AddNewsPanel_NewsTitle:SetBackdropBorderColor(0, 0, 0, 0);
+	AddNewsPanel_FilterButton:SetFrameLevel(self:GetFrameLevel() + 2);
+	AddNewsPanel_Public:SetFrameLevel(self:GetFrameLevel() + 2);
+
+	local Scroll = CreateFrame('ScrollFrame', 'AddNewsPanelScroll', AddNewsPanel_AddNewsTextZone, 'UIPanelScrollFrameTemplate');
+	Scroll:SetPoint('TOPLEFT', AddNewsPanel_AddNewsTextZone, 'TOPLEFT', 8, -10);
+	Scroll:SetPoint('BOTTOMRIGHT', AddNewsPanel_AddNewsTextZone, 'BOTTOMRIGHT', -30, 8);
 	Scroll:SetScrollChild(AddNewsPanel_NewsText);
 end
 
-function AddNewsButton_OnClick()
+function AddNewsPanelAddNewsButton_OnClick()
 	if(AddNewsPanelVisible) then
 		AddNewsPanel:Hide();
 		AddNewsPanelVisible = false;
 	else
+		AddNewsPanel.ID = WCollections:GetNewsIndex();
+		AddNewsPanel.Type = 1;
+		AddNewsPanel.isPublic = 0;
+		AddNewsPanel.Edit = false;
+		AddNewsPanel_NewsTitle:SetText("");
+		AddNewsPanel_NewsText:SetText("");
+		AddNewsPanel_Public:SetChecked(false);
 		AddNewsPanel:SetPoint("TOPRIGHT", "CollectionsJournal", "TOPRIGHT",600, 0);
 		AddNewsPanel:Show();
 		AddNewsPanelVisible = true;
 	end
+end
+
+function AddNewsPanelEditNewsButton_OnClick()
+	if(AddNewsPanelVisible) then
+		AddNewsPanel:Hide();
+		AddNewsPanelVisible = false;
+	else
+		AddNewsPanel.ID  = NewsJournal.selectedNewsID;
+		local Date, Title, _NewsID, Text, icon, Type, isPublic = C_NewsJournal.GetNewsInfoByID(NewsJournal.selectedNewsID);
+
+		AddNewsPanel_NewsTitle:SetText(dec(Title));
+		AddNewsPanel_NewsText:SetText(dec(Text));
+		AddNewsPanel.Type = Type;
+		AddNewsPanel.isPublic = isPublic;
+		AddNewsPanel.Edit = true;
+
+		if isPublic == 1 then
+			AddNewsPanel_Public:SetChecked(true);
+		else
+			AddNewsPanel_Public:SetChecked(false);
+		end
+
+		AddNewsPanel:SetPoint("TOPRIGHT", "CollectionsJournal", "TOPRIGHT",600, 0);
+		AddNewsPanel:Show();
+		AddNewsPanelVisible = true;
+	end
+end
+
+function AddNewsPanelDelNewsButton_OnClick()
+	local ID  = NewsJournal.selectedNewsID;
+	WCollections:SendAddonMessage("NEWS\1DEL\1"..ID);
+	C_NewsJournal.RefreshNews();
+	NewsJournal_UpdateNewsList();
+	NewsJournal_UpdateNewsDisplay();
+end
+
+function AddNewsPanelSendButton_OnClick()
+	local ID  = AddNewsPanel.ID or WCollections:GetNewsIndex();
+	local News_time = time();
+	local Title = AddNewsPanel_NewsTitle:GetText();
+	local Text = AddNewsPanel_NewsText:GetText();
+	local TypeNews = AddNewsPanel.Type or 1;
+	local isPublic = AddNewsPanel.isPublic;
+	Title = enc(Title);
+	Text = enc(Text);
+	News_time = tostring(News_time);
+
+	if (#Title > 0 and #Text > 0) then
+		if(AddNewsPanel.Edit) then
+			WCollections:SendAddonMessage("NEWS\1ADD\1"..ID.."\2"..News_time.."\2"..Title.."\2"..TypeNews.."\2"..isPublic.."\2E");
+		else
+			WCollections:SendAddonMessage("NEWS\1ADD\1"..ID.."\2"..News_time.."\2"..Title.."\2"..TypeNews.."\2"..isPublic.."\2A");
+		end
+
+		local size = #Text;
+		local size_index = math.ceil(size / 200);
+	
+		for i=0, size_index-1 do
+			local end_index;
+
+			if (((i+1)*200 - 1) < size) then
+				end_index = (i+1)*200 - 1;
+			else
+				end_index = size;
+			end
+
+			local text_part = string.sub(Text, i*200, end_index); 
+			WCollections:SendAddonMessage("NEWS\1ADDTEXT\1"..ID.."\2"..text_part);
+		end
+
+		C_NewsJournal.RefreshNews();
+		NewsJournal_UpdateNewsList();
+		NewsJournal_UpdateNewsDisplay();
+
+		AddNewsPanel.ID = WCollections:GetNewsIndex();
+		AddNewsPanel.Type = 1;
+		AddNewsPanel.isPublic = 0;
+		AddNewsPanel_NewsTitle:SetText("");
+		AddNewsPanel_NewsText:SetText("");
+		AddNewsPanel:Hide();
+		AddNewsPanelVisible = false;
+	end
+end
+
+function AddNewsPanel_CheckSecurity()
+	SendChatMessage(".account ", "WHISPER", nil, UnitName("player"));
+	waitingForPin = true;
+end
+
+function AddNewsPanelPublic_OnClick()
+	if(AddNewsPanel_Public:GetChecked()) then
+		AddNewsPanel.isPublic = 1;
+	else
+		AddNewsPanel.isPublic = 0;
+	end
+end
+
+function NewsJournalFilterDropDown_OnLoad(self)
+	WCollections:UIDropDownMenu_Initialize(self, NewsJournalFilterDropDown_Initialize, "MENU");
+end
+
+function NewsJournalFilterDropdown_ResetFilters()
+	C_NewsJournal.SetDefaultFilters();
+	NewsJournalFilterButton.ResetButton:Hide();
+end
+
+function NewsJournalResetFiltersButton_UpdateVisibility()
+	NewsJournalFilterButton.ResetButton:SetShown(not C_NewsJournal.IsUsingDefaultFilters());
+end
+
+function NewsJournalFilterDropDown_Initialize(self, level)
+	local info = UIDropDownMenu_CreateInfo();
+	info.keepShownOnClick = true;
+
+	for i=1, 5 do
+		info = UIDropDownMenu_CreateInfo();
+		info.keepShownOnClick = true;
+		info.isNotRadio = true;
+
+		info.text = newsTypeStrings[i-1];
+
+		info.func = function(_, _, _, value)
+						C_NewsJournal.SetTypeFilter(i, value);
+					end
+		info.checked = function() return C_NewsJournal.IsTypeChecked(i) end;
+		UIDropDownMenu_AddButton(info, level);
+	end;
+end
+
+function AddNewsPanelFilterDropDown_OnLoad(self)
+	WCollections:UIDropDownMenu_Initialize(self, AddNewsPanelFilterDropDown_Initialize, "MENU");
+end
+
+function NewsJournalFilterDropdown_ResetFilters()
+	C_NewsJournal.SetDefaultFilters();
+	AddNewsPanelFilterButton.ResetButton:Hide();
+end
+
+function AddNewsPanelResetFiltersButton_UpdateVisibility()
+	AddNewsPanelFilterButton.ResetButton:SetShown(not C_NewsJournal.IsUsingDefaultFilters());
+end
+
+function AddNewsPanelFilterDropDown_Initialize(self, level)
+	local info = UIDropDownMenu_CreateInfo();
+	info.keepShownOnClick = true;
+
+	for i=1, 5 do
+		info = UIDropDownMenu_CreateInfo();
+		info.keepShownOnClick = false;
+		info.isNotRadio = false;
+
+		info.text = newsTypeStrings[i-1];
+
+		info.func = function(_, _, _, value)
+						AddNewsPanelFilterDropDown_SetCheck(i);
+					end
+		info.checked = function() return AddNewsPanelFilterDropDown_isCheck(i) end;
+		UIDropDownMenu_AddButton(info, level);
+	end;
+end
+
+
+function AddNewsPanelFilterDropDown_isCheck(index)
+	if(AddNewsPanel.Type == index) then
+		return true;
+	end
+
+	return false;
+end
+
+function AddNewsPanelFilterDropDown_SetCheck(index)
+	AddNewsPanel.Type = index;
+end
+
+
+local ORIG_ChatFrame_MessageEventHandler = ChatFrame_MessageEventHandler;
+function ChatFrame_MessageEventHandler(self, event, ...)
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = ...;
+	local ActionTaken = false;
+   
+    if waitingForPin  then
+		if (event ~= "CHAT_MSG_SYSTEM") then
+			waitingForPin = false;
+			ActionTaken = true;
+		end
+		
+        if string.find(arg1, "Your account level is:") then
+			if waitingForPin  then
+				local accLevel  = string.match(arg1, "Your account level is: (.*)");
+				if accLevel then
+					ActionTaken = true;
+					waitingForPin = false;
+					WCollections:SetAccountLevel(accLevel);
+				end
+            else
+			    waitingForPin = false;
+			end
+		end
+		if string.find(arg1, "Security Level:") then
+			ActionTaken = true;
+		end
+		if string.find(arg1, "Уровень вашей учетной записи:") then
+			if waitingForPin  then
+				local accLevel  = string.match(arg1, "Уровень вашей учетной записи: (.*)");
+				if accLevel then
+					ActionTaken = true;
+					waitingForPin = false;
+					WCollections:SetAccountLevel(accLevel);
+				end
+            else
+			    waitingForPin = false;
+			end
+		end
+    end
+
+    if not ActionTaken then
+        ORIG_ChatFrame_MessageEventHandler(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+    end
 end

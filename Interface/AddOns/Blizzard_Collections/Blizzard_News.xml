@@ -27,7 +27,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="name" inherits="GameFontNormal" justifyH="LEFT">
+                <FontString parentKey="title" inherits="GameFontNormal" justifyH="LEFT">
                     <Size x="147" y="25"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parenticon" x="10" y="-5"/>
@@ -138,6 +138,26 @@
 					<OnHide function="NewsJournal_ClearSearch"/>
 				</Scripts>
 			</EditBox>
+			<Button name="$parentFilterButton" inherits="UIResettableDropdownButtonTemplate" text="FILTER">
+				<Size x="93" y="22"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentLeftInset" x="-5" y="-9"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIResettableDropdownButtonMixin_OnLoad(self, NewsJournalFilterDropdown_ResetFilters);
+					</OnLoad>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ToggleDropDownMenu(1, nil, NewsJournalFilterDropDown, "NewsJournalFilterButton", 74, 15);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parentFilterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad function="NewsJournalFilterDropDown_OnLoad"/>
+				</Scripts>
+			</Frame>
 			<Frame parentKey="NewsDisplay">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentRightInset" relativePoint="TOPLEFT" x="3" y="-3"/>
@@ -145,27 +165,58 @@
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<Texture parentKey="YesAurasTex" file="Interface\AddOns\WCollections\Interface\PetBattles\news_background2" setAllPoints="true">
+						<Texture parentKey="YesAurasTex" file="Interface\AddOns\WCollections\Interface\PetBattles\news_background" setAllPoints="true">
 							<TexCoords left="0" right="1" top="0" bottom="1"/>
 						</Texture>
 					</Layer>
+					<Layer level="OVERLAY">
+						<FontString name = "$parent_NoNews" parentKey="NoNews" inherits="GameFontBlackMedium" justifyH="CENTER" text="ERR_NO_NEWS">
+							<Size x="280" y="80"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
 				</Layers>
-
 				<Frames>
 					<Frame parentKey="ShadowOverlay" inherits="ShadowOverlayTemplate" useParentLevel="true" setAllPoints="true" />
-					<EditBox name="$parentSource2"  parentKey="NewsAdd" inherits = "NewsAdd_Input_Text">
+					<Frame name="$parent_NewsTextZone" parentKey="NewsTextZone" EnableKeyboard = "false" frameStrata="HIGH" useParentLevel="true" >
+						<Size x="370" y="420"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT"  x="-35" y="10" />
+						</Anchors>
+					</Frame>
+
+					<EditBox name="$parent_NewsText" multiLine="true">
 						<Size>
-							<AbsDimension x="345" y="300"/>
+							<AbsDimension x="340" y="300"/>
 						</Size>
 						<Anchors>
-							<Anchor point="CENTER" relativeTo = "InfoButton">
+							<Anchor point="TOPLEFT" relativeTo = "$parent_NewsTextZone">
 								<Offset>
-									<AbsDimension x="50" y="-200"/>
+									<AbsDimension x="0" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<FontString name="$parentText" inherits="GameFontBlackMedium" text="ADD_NEWS" justifyH="CENTER" />
+						<Scripts>
+							<OnLoad>
+								self:SetAutoFocus(false);
+							</OnLoad>
+							<OnEscapePressed>
+								self:ClearFocus();
+							</OnEscapePressed>
+							<OnChar>
+								NewsJournal_UpdateNewsDisplay();
+							</OnChar>
+						</Scripts>
+						<FontString inherits="GameFontBlackMedium"/>
 					</EditBox>
+					<ScrollFrame name="NewsTextPanelScroll" parentKey="NewsTextPanelScroll" inherits="UIPanelScrollFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="NewsJournal_NewsTextZone" x="18" y="0"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="NewsJournal_NewsTextZone" x="0" y="8"/>
+						</Anchors>
+					</ScrollFrame>
 					<ScrollFrame parentKey="InfoButton" >
 						<KeyValues>
 							<KeyValue key="hasIconHyperlinks" value="true" type="boolean"/>
@@ -200,56 +251,9 @@
 										<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentIcon" x="10" y="0"/>
 									</Anchors>
 								</FontString>
-
-								<Texture parentKey="$parentURL" file="Interface\AddOns\WCollections\Interface\PetBattles\url_ico" alphaMode="ADD">
-									<Size x="24" y="24"/>
-									<Anchors>
-										<Anchor point="LEFT" relativeTo="$parentName" x="180" y="0"/>
-									</Anchors>
-									<Scripts>
-										<OnClick>
-											PlaySound("igInventoryRotateCharacter");
-										</OnClick>
-										<OnDoubleClick function=""/>
-										<OnEnter>
-										PlaySound("igInventoryRotateCharacter");
-										</OnEnter>
-										<OnLeave>
-										</OnLeave>
-										<OnLoad>
-										</OnLoad>
-									</Scripts>
-								</Texture>
-
-								<Button parentKey="$parentUrlButton" motionScriptsWhileDisabled="true" name = "UrlButton"  text="">
-									<Size x="24" y="24"/>
-									<Anchors>
-										<Anchor point="LEFT" relativeTo="$parentName" x="200" y="0"/>
-									</Anchors>
-
-									<Texture file="Interface\AddOns\WCollections\Interface\PetBattles\url_ico" parentKey="ActiveTexture" alphaMode="ADD"/>
-
-									<Scripts>
-										<OnClick function=""/>
-										<OnDoubleClick function=""/>
-										<OnEnter>
-										</OnEnter>
-										<OnLeave>
-										</OnLeave>
-										<OnLoad>
-										</OnLoad>
-									</Scripts>
-								</Button>
-								<FontString name="$parentSource" inherits="GameFontBlackMedium" justifyH="LEFT" parentKey="NewsText">
-									<Size x="345" y="0"/>
-									<Anchors>
-										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentIcon" x="0" y="-20"/>
-									</Anchors>
-								</FontString>
-
 							</Layer>
 							<Layer level="OVERLAY" textureSubLevel="2">
-								<FontString name="$parentNew" parentKey="New" inherits="GameFontHighlight" wordwrap="false" justifyH="CENTER" text="NEW_CAPS" hidden="true">
+								<FontString name="$parentNew" parentKey="New" inherits="GameFontHighlight" wordwrap="false" justifyH="CENTER" text="NEW_CAPS" hidden="false">
 									<Anchors>
 										<Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="8" y="0"/>
 									</Anchors>
@@ -258,7 +262,7 @@
 									</Shadow>
 								</FontString>
 
-								<Texture parentKey="NewGlow" atlas="collections-newglow" file="Interface\AddOns\WCollections\Interface\Collections\Collections"  hidden="true">
+								<Texture parentKey="NewGlow" atlas="collections-newglow" file="Interface\AddOns\WCollections\Interface\Collections\Collections"  hidden="false">
 									<TexCoords left="0.51171875" right="0.626953125" top="0.013671875" bottom="0.0859375"/>
 									<Anchors>
 										<Anchor point="TOPLEFT" relativeTo="$parentNew" x="-20" y="10"/>
@@ -286,13 +290,12 @@
 							<OnLoad>
 								self.trackBG:Show();
 								self.trackBG:SetVertexColor(0, 0, 0, 0.75);
-								
 							</OnLoad>
 						</Scripts>
 					</Slider>
 				</Frames>
 			</ScrollFrame>
-			<Button parentKey="AddNewsButton" name="$parentAurasButton" inherits="MagicButtonTemplate" text="ADD_NEWS">
+			<Button parentKey="AddNewsButton" name="$parentAddNewsButton" inherits="MagicButtonTemplate" hidden="true" text="ADD_NEWS">
 				<Size x="140" y="22"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT"/>
@@ -301,7 +304,31 @@
 
 				</Frames>
 				<Scripts>
-					<OnClick function="AddNewsButton_OnClick"/>
+					<OnClick function="AddNewsPanelAddNewsButton_OnClick"/>
+				</Scripts>
+			</Button>
+			<Button parentKey="EditNewsButton" name="$parentEditNewsButton" inherits="MagicButtonTemplate" hidden="true" text="EDIT_NEWS">
+				<Size x="140" y="22"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentAddNewsButton" relativePoint="RIGHT" x="150" y="0"/>
+				</Anchors>
+				<Frames>
+
+				</Frames>
+				<Scripts>
+					<OnClick function="AddNewsPanelEditNewsButton_OnClick"/>
+				</Scripts>
+			</Button>
+			<Button parentKey="DelNewsButton" name="$parentDelNewsButton" inherits="MagicButtonTemplate" hidden="true" text="DEL_NEWS">
+				<Size x="140" y="22"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentEditNewsButton" relativePoint="RIGHT"  x="150" y="0"/>
+				</Anchors>
+				<Frames>
+
+				</Frames>
+				<Scripts>
+					<OnClick function="AddNewsPanelDelNewsButton_OnClick"/>
 				</Scripts>
 			</Button>
 		</Frames>
@@ -344,7 +371,7 @@
 
 		  <Frame name="$parent_Main" frameLevel="-1">
 			 <Size>
-				<AbsDimension x="600" y="600" />
+				<AbsDimension x="500" y="600" />
 			 </Size>
 			 <Anchors>
 				<Anchor point="TOP">
@@ -391,29 +418,26 @@
 
 	<EditBox name="NewsAdd_Input_Text" enableMouse="true" virtual="true" frameStrata="DIALOG" autoFocus="false" >
         <Size>
-            <AbsDimension x="100" y="500"/>
+            <AbsDimension x="410" y="500"/>
         </Size>
-        <Backdrop bgFile="Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background2"
+        <Backdrop bgFile="Interface\\AddOns\\WCollections\\Interface\\PetBattles\\news_background"
                           edgeFile="" tile="true">
 
-                    <EdgeSize>
-                        <AbsValue val="64"/>
-                    </EdgeSize>
-                    <TileSize>
-                        <AbsValue val="62"/>
-                    </TileSize>
-                    <BackgroundInsets>
-                        <AbsInset left="3" right="3" top="3" bottom="3"/>
-                    </BackgroundInsets>
-                </Backdrop>
+			<EdgeSize>
+				<AbsValue val="64"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="62"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="3" bottom="3"/>
+			</BackgroundInsets>
+        </Backdrop>
         <Scripts>
             <OnLoad>
-                --self:SetTextInsets(5, 5, 0, 2);
-                --self:SetBackdropColor(0,0,0);
+                self:SetTextInsets(5, 5, 5, 2);
+                self:SetBackdropColor(0,0,0);
             </OnLoad>
-            <OnEnterPressed>
-                self:ClearFocus();
-            </OnEnterPressed>
             <OnEscapePressed>
                 self:ClearFocus();
             </OnEscapePressed>
@@ -421,59 +445,110 @@
         <FontString inherits="GameFontBlack"/>
     </EditBox>
 
+	<!--News add panel-->
 	<Button name="AddNewsPanel" inherits="NewsAddTemplate" hidden="true" toplevel="false">
-        <Size x="600" y="600"/>
+        <Size x="500" y="600"/>
         <Anchors>
             <Anchor point="TOPRIGHT" relativeTo="CollectionsJournal" relativePoint="BOTTOMRIGHT"/>
         </Anchors>
-
         <Frames>
 			<Frame name="$parent_AddNewsTextZone" parentKey="AddNewsTextZone" useParentLevel="true" inherits="InsetFrameTemplate">
-				<Size x="500" y="500"/>
+				<Size x="450" y="500"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="20" y="-100" />
 					<Anchor point="BOTTOMLEFT" x="20" y="52" />
 				</Anchors>
-
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name = "$parent_AddNewsZoneBack" parentKey="AddNewsZoneBack" file="Interface\AddOns\WCollections\Interface\PetBattles\news_background" setAllPoints="true">
+							<TexCoords left="0" right="1" top="0" bottom="1"/>
+						</Texture>
+					</Layer>
+				</Layers>
 			</Frame>
-			<Button name="$parent_Send" inherits="MagicButtonTemplate" text="SEND_NEWS" toplevel="true">
-                <Size x="140" y="28"/>
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeTo="AddNewsPanel" relativePoint="BOTTOMLEFT" x="30" y="10"/>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        
-                    </OnClick>
-                </Scripts>
-            </Button>
 			<EditBox name="$parent_NewsTitle" inherits = "NewsAdd_Input_Text">
 				<Size>
-					<AbsDimension x="260" y="24"/>
+					<AbsDimension x="260" y="18"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo = "AddNewsPanel">
 						<Offset>
-							<AbsDimension x="30" y="-75"/>
+							<AbsDimension x="30" y="-55"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<FontString inherits="GameFontBlackMedium"/>
 			</EditBox>
 
-				<EditBox name="$parent_NewsText" inherits = "NewsAdd_Input_Text">
-					<Size>
-						<AbsDimension x="450" y="500"/>
-					</Size>
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo = "$parent_AddNewsTextZone">
-							<Offset>
-								<AbsDimension x="0" y="0"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</EditBox>
+			<EditBox name="$parent_NewsText" multiLine="true" letters = "12000">
+				<Size>
+					<AbsDimension x="410" y="500"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo = "$parent_AddNewsTextZone">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<FontString inherits="GameFontBlackMedium"/>
+			</EditBox>
 
+			<Button name="$parent_Send" inherits="MagicButtonTemplate" text="SEND_NEWS" toplevel="true">
+                <Size x="140" y="28"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeTo="AddNewsPanel" relativePoint="BOTTOMLEFT" x="20" y="10"/>
+                </Anchors>
+                <Scripts>
+                        <OnClick function="AddNewsPanelSendButton_OnClick"/>
+                </Scripts>
+            </Button>
 
+			<CheckButton name="$Parent_Public" inherits="InterfaceOptionsSmallCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-50" y="10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						AddNewsPanelPublic_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_NONE");
+						GameTooltip:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -CONTAINER_OFFSET_X - 13,
+						CONTAINER_OFFSET_Y);
+						GameTooltip:AddLine(NEWS_PUBLIC);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</CheckButton>
+
+			<Button name="$parent_FilterButton" inherits="UIResettableDropdownButtonTemplate" text="NEWS_TYPE">
+				<Size x="93" y="22"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT"  x="-80" y="-53"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIResettableDropdownButtonMixin_OnLoad(self, AddNewsPanelFilterDropdown_ResetFilters);
+					</OnLoad>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ToggleDropDownMenu(1, nil, AddNewsPanel_FilterDropDown, "AddNewsPanel_FilterButton", 74, 15);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parent_FilterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad function="AddNewsPanelFilterDropDown_OnLoad"/>
+				</Scripts>
+			</Frame>
         </Frames>
 		
 		<Scripts>

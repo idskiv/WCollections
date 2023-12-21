@@ -579,6 +579,7 @@ L["Misc.WintergraspButton.CanQueue"]                    = "|cffffffffYou are now
 L["Tutorial.MicroButton"]                               = "Click here to view your collections."
 L["Tutorial.PortraitButton"]                            = "Click here to switch between Appearances and Transmogrify."
 L["Tutorial.TransmogTab"]                               = "Click here to access Transmogrification."
+L["Tutorial.NewNews"]                                   = "There is fresh news for you."
 L["Addon.Blizzard_TradeSkillUI.RecipeIconPlacement"]    = "Recipe List Icon Placement"
 L["Addon.Blizzard_TradeSkillUI.RecipeIconPlacement.1"]  = "Hide"
 L["Addon.Blizzard_TradeSkillUI.RecipeIconPlacement.2"]  = "Left"

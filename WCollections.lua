@@ -427,6 +427,16 @@ function addon:OnInitialize()
                 NewSetSources = { },
                 LatestSetSource = nil,
             },
+            NewsJournal =
+            {
+                PerCharacter =
+                {
+                    ["*"] =
+                    {
+                        NeedFanfare = { },
+                    },
+                },
+            },
             MountJournal =
             {
                 PerCharacter =
@@ -491,6 +501,7 @@ function addon:OnInitialize()
                     -- latestTransmogSetSource, -- itemModifiedAppearanceID of the latest collected source belonging to a set
                     transmogCurrentSpecOnly = false, -- Stores whether transmogs apply to current spec instead of all specs
                     miniDressUpFrame = false,
+                    newsJournalTypeFilter = 0, -- Bitfield for which type filters are applied in the news journal
                     mountJournalGeneralFilters = 0, -- Bitfield for which collected filters are applied in the mount journal
                     mountJournalSourcesFilter = 0, -- Bitfield for which source filters are applied in the mount journal
                     mountJournalTypeFilter = 0, -- Bitfield for which type filters are applied in the mount journal
@@ -571,6 +582,7 @@ function addon:OnInitialize()
             Sets = { },
             Cameras = { },
             Toys = { },
+            News = { },
         },
     };
 
@@ -5146,6 +5158,30 @@ WCollections =
         return self.ActiveVisualAura or 0;
     end,
 
+    -- News
+    accountLevel = 0,
+    newsIndex = 0;
+    GetAccountLevel = function(self)
+        return self.accountLevel;
+    end,
+    SetAccountLevel = function(self, accLvl)
+        self.accountLevel = tonumber(accLvl);
+    end,
+    GetNewsIndex = function(self)
+        return self.newsIndex;
+    end,
+    GetNewsNeedFanfareContainer = function(self)
+        return self.Config.NewsJournal.PerCharacter[self:GetCharacterConfigKey()].NeedFanfare;
+    end,
+
+    SetAnnounce = function(self, newsID)
+        C_Timer.After(2, function()
+            if(not NewsJournal:IsVisible()) then
+                MainMenuMicroButton_ShowAlert(CollectionsMicroButtonAlert, L["Tutorial.NewNews"] , 0);
+            end
+        end);
+    end,
+
     -- Pets
     ActivePetSubscriptionEndTime = 0,
     ActivePetSubscriptionInfo = nil,
@@ -6373,6 +6409,59 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             end;
         end
     end);
+    match(message, "NEWS\1", function(data)
+        local subCmd, str, _ = string.match(data, "^(.-)\1(.-)$");
+        if(subCmd == "GET") then
+            for _, new in ipairs({ strsplit("\1", str) }) do
+                if new == "END" then
+                elseif new ~= "" then
+                    local id, news_time, title, newsType, isPublic = string.match(new, "^(.-)\2(.-)\2(.-)\2(.-)\2(.-)$");
+                    news_time = tonumber(news_time);
+                    newsType = tonumber(newsType);
+                    isPublic = tonumber(isPublic);
+                    WCollections.Cache.News[id] = {news_time, title, "", newsType, isPublic};
+                end
+            end
+        end
+        if(subCmd == "GETTEXT") then
+            for _, new in ipairs({ strsplit("\1", str) }) do
+                if new == "END" then
+                    C_NewsJournal.RefreshNews();
+                    NewsJournal_UpdateNewsList();
+                    NewsJournal_UpdateNewsDisplay();
+                elseif new ~= "" then
+                    local id, text = string.match(new, "^(.-)\2(.-)$");
+                    WCollections.Cache.News[id][3] = WCollections.Cache.News[id][3]..text;
+                end
+            end
+        end
+        if(subCmd == "DEL") then
+            if str ~= "" then
+                newsID = str;
+                WCollections.Cache.News[newsID] = nil;
+
+                if(WCollections:GetNewsNeedFanfareContainer()[newsID]) then
+                    WCollections:GetNewsNeedFanfareContainer()[newsID] = nil;
+                end
+
+                C_NewsJournal.RefreshNews();
+                NewsJournal_Select(1);
+                NewsJournal_UpdateNewsList();
+                NewsJournal_UpdateNewsDisplay();
+            end
+        end
+        if(subCmd == "INDEX") then
+            if str ~= "" then
+                for _, indexNews in pairs({ strsplit("\1", str) }) do
+                    if indexNews ~= "" then
+                        indexNews = tonumber(indexNews);
+                        WCollections.newsIndex = indexNews;
+                    end
+                end
+            end
+        end
+
+    end);
     match(message, "HIDEVISUALSLOTS:", function(slots)
         WCollections.HideVisualSlots = { };
         for _, slot in ipairs({ strsplit(":", slots) }) do
@@ -7263,9 +7352,12 @@ function addon:PLAYER_ENTERING_WORLD(event)
     if WCollections and WCollections.preloadCacheMountsNextOffset then
         WCollections:SendAddonMessage("PRELOADCACHE:MOUNTS:"..WCollections.preloadCacheMountsNextOffset);
     end
+    C_NewsJournal.RefreshNews();
     C_AurasJournal.RefreshAuras();
     C_MountJournal.RefreshMounts();
     C_PetJournal.RefreshPets();
+    C_NewsJournal.SynchronizationNews();
+    AddNewsPanel_CheckSecurity();
 
     WCollectionsUpdateActionBars();
 end

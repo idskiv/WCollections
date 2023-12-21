@@ -14,7 +14,7 @@ end
 
 function MicroButtonAlert_OnShow(self)
 	self:SetHeight(self.Text:GetHeight() + 42);
-	if ( self.tutorialIndex and WCollections:GetCVarBitfield("closedInfoFrames", self.tutorialIndex) ) then
+	if ( self.tutorialIndex and self.tutorialIndex ~= 0 and WCollections:GetCVarBitfield("closedInfoFrames", self.tutorialIndex) ) then
 		self:Hide();
 	end
 end
@@ -65,7 +65,7 @@ function MainMenuMicroButton_ShowAlert(alert, text, tutorialIndex)
 		return false;
 	end
 
-	if tutorialIndex and WCollections:GetCVarBitfield("closedInfoFrames", tutorialIndex) then
+	if tutorialIndex and tutorialIndex ~=0 and WCollections:GetCVarBitfield("closedInfoFrames", tutorialIndex) then
 		return false;
 	end
 
