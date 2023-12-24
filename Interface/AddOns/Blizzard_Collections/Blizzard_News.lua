@@ -278,7 +278,7 @@ end
 
 function AddNewsPanelDelNewsButton_OnClick()
 	local ID  = NewsJournal.selectedNewsID;
-	WCollections:SendAddonMessage("NEWS\1DEL\1"..ID);
+	WCollections:SendAddonMessage("NEWS:DEL:"..ID);
 	C_NewsJournal.RefreshNews();
 	NewsJournal_UpdateNewsList();
 	NewsJournal_UpdateNewsDisplay();
@@ -297,9 +297,9 @@ function AddNewsPanelSendButton_OnClick()
 
 	if (#Title > 0 and #Text > 0) then
 		if(AddNewsPanel.Edit) then
-			WCollections:SendAddonMessage("NEWS\1ADD\1"..ID.."\2"..News_time.."\2"..Title.."\2"..TypeNews.."\2"..isPublic.."\2E");
+			WCollections:SendAddonMessage("NEWS:ADD:"..ID..":"..News_time..":"..Title.."\2"..TypeNews..":"..isPublic..":E");
 		else
-			WCollections:SendAddonMessage("NEWS\1ADD\1"..ID.."\2"..News_time.."\2"..Title.."\2"..TypeNews.."\2"..isPublic.."\2A");
+			WCollections:SendAddonMessage("NEWS:ADD:"..ID..":"..News_time..":"..Title.."\2"..TypeNews..":"..isPublic..":A");
 		end
 
 		local size = #Text;
@@ -315,7 +315,7 @@ function AddNewsPanelSendButton_OnClick()
 			end
 
 			local text_part = string.sub(Text, i*200, end_index); 
-			WCollections:SendAddonMessage("NEWS\1ADDTEXT\1"..ID.."\2"..text_part);
+			WCollections:SendAddonMessage("NEWS:ADDTEXT:"..ID..":"..text_part);
 		end
 
 		C_NewsJournal.RefreshNews();

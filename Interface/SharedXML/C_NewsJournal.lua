@@ -186,16 +186,14 @@ function C_NewsJournal.IsTypeChecked(filterIndex)
 end
 
 function C_NewsJournal.SynchronizationNews()
-    C_Timer.After(60, function()
-            local msg = "NEWS\1SYNC";
-            for NewsID, info in pairs(WCollections.Cache.News) do
-                local  time_news, title, _, _, isPublic = unpack(info);
-                time_news = tostring(time_news);
-                msg = msg.."\1"..NewsID.."\2"..time_news;
-            end
-            WCollections:SendAddonMessage(msg);
-            C_NewsJournal.SynchronizationNews();
-    end);
+    local msg = "NEWS:SYNC";
+    for NewsID, info in pairs(WCollections.Cache.News) do
+        local  time_news, title, _, _, isPublic = unpack(info);
+        time_news = tostring(time_news);
+        msg = msg..":"..NewsID..":"..time_news;
+    end
+    msg = msg .. ":END";
+    WCollections:SendAddonMessage(msg);
 end
 
 function C_NewsJournal.ClearRecentFanfares()

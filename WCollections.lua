@@ -6409,8 +6409,8 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             end;
         end
     end);
-    match(message, "NEWS\1", function(data)
-        local subCmd, str, _ = string.match(data, "^(.-)\1(.-)$");
+    match(message, "NEWS:", function(data)
+        local subCmd, str, _ = string.match(data, "^(.-):(.-)$");
         if(subCmd == "GET") then
             for _, new in ipairs({ strsplit("\1", str) }) do
                 if new == "END" then
@@ -6452,7 +6452,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         end
         if(subCmd == "INDEX") then
             if str ~= "" then
-                for _, indexNews in pairs({ strsplit("\1", str) }) do
+                for _, indexNews in pairs({ strsplit(":", str) }) do
                     if indexNews ~= "" then
                         indexNews = tonumber(indexNews);
                         WCollections.newsIndex = indexNews;
