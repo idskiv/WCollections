@@ -52,10 +52,6 @@ local function MatchesFilter(NewsID)
         return false;
     end
 
-    if(isPublic == 0 and WCollections:GetAccountLevel() < 2 ) then
-        return false;
-    end
-
     return true;
 end
 
@@ -73,7 +69,7 @@ function C_NewsJournal.RefreshNews()
 
     for NewsID, info in pairs(WCollections.Cache.News) do
         local news_time, title, text, newsType, isPublic = unpack(info);
-        if (#title > 0 and (isPublic == 1 or (isPublic == 0 and WCollections:GetAccountLevel() > 2)))  then
+        if (#title > 0)  then
             C_NewsJournal.News[NewsID] = info;
         end
     end

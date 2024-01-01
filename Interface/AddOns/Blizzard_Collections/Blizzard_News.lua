@@ -40,7 +40,7 @@ function NewsJournal_OnShow(self)
 	end
 	NewsJournal_UpdateNewsDisplay();
 
-	if(WCollections:GetAccountLevel() > 2) then
+	if(WCollections:GetNewsIndex() > 0) then
 		NewsJournalAddNewsButton:Show();
 		NewsJournalEditNewsButton:Show();
 		NewsJournalDelNewsButton:Show();
@@ -315,7 +315,11 @@ function AddNewsPanelSendButton_OnClick()
 			end
 
 			local text_part = string.sub(Text, i*200, end_index); 
-			WCollections:SendAddonMessage("NEWS:ADDTEXT:"..ID..":"..text_part);
+			if (i < size_index-1) then		
+				WCollections:SendAddonMessage("NEWS:ADDTEXT:"..ID..":"..text_part);
+			else
+				WCollections:SendAddonMessage("NEWS:ADDTEXT:"..ID..":"..text_part..":END");
+			end
 		end
 
 		C_NewsJournal.RefreshNews();
@@ -330,11 +334,6 @@ function AddNewsPanelSendButton_OnClick()
 		AddNewsPanel:Hide();
 		AddNewsPanelVisible = false;
 	end
-end
-
-function AddNewsPanel_CheckSecurity()
-	SendChatMessage(".account ", "WHISPER", nil, UnitName("player"));
-	waitingForPin = true;
 end
 
 function AddNewsPanelPublic_OnClick()
@@ -422,48 +421,3 @@ function AddNewsPanelFilterDropDown_SetCheck(index)
 	AddNewsPanel.Type = index;
 end
 
-
-local ORIG_ChatFrame_MessageEventHandler = ChatFrame_MessageEventHandler;
-function ChatFrame_MessageEventHandler(self, event, ...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = ...;
-	local ActionTaken = false;
-   
-    if waitingForPin  then
-		if (event ~= "CHAT_MSG_SYSTEM") then
-			waitingForPin = false;
-			ActionTaken = true;
-		end
-		
-        if string.find(arg1, "Your account level is:") then
-			if waitingForPin  then
-				local accLevel  = string.match(arg1, "Your account level is: (.*)");
-				if accLevel then
-					ActionTaken = true;
-					waitingForPin = false;
-					WCollections:SetAccountLevel(accLevel);
-				end
-            else
-			    waitingForPin = false;
-			end
-		end
-		if string.find(arg1, "Security Level:") then
-			ActionTaken = true;
-		end
-		if string.find(arg1, "Уровень вашей учетной записи:") then
-			if waitingForPin  then
-				local accLevel  = string.match(arg1, "Уровень вашей учетной записи: (.*)");
-				if accLevel then
-					ActionTaken = true;
-					waitingForPin = false;
-					WCollections:SetAccountLevel(accLevel);
-				end
-            else
-			    waitingForPin = false;
-			end
-		end
-    end
-
-    if not ActionTaken then
-        ORIG_ChatFrame_MessageEventHandler(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
-    end
-end

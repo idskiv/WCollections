@@ -5159,14 +5159,7 @@ WCollections =
     end,
 
     -- News
-    accountLevel = 0,
     newsIndex = 0;
-    GetAccountLevel = function(self)
-        return self.accountLevel;
-    end,
-    SetAccountLevel = function(self, accLvl)
-        self.accountLevel = tonumber(accLvl);
-    end,
     GetNewsIndex = function(self)
         return self.newsIndex;
     end,
@@ -7357,7 +7350,6 @@ function addon:PLAYER_ENTERING_WORLD(event)
     C_MountJournal.RefreshMounts();
     C_PetJournal.RefreshPets();
     C_NewsJournal.SynchronizationNews();
-    AddNewsPanel_CheckSecurity();
 
     WCollectionsUpdateActionBars();
 end
