@@ -81,14 +81,14 @@ function NewsJournal_UpdateNewsList()
 			local _, _, _NewsID, _, _, _ = C_NewsJournal.GetDisplayedNewsInfo(index);
 			local Date, Title, _NewsID, Text, icon, Type, isPublic = C_NewsJournal.GetNewsInfoByID(_NewsID);
 			local needsFanFare = C_NewsJournal.NeedsFanfare(_NewsID);
-			local le_pipiska = true;
+			local notPublicNews = true;
 
 			button.title:SetText(dec(Title));
 			button.icon:SetTexture(icon); 
 			if(isPublic == 0) then
-				button.new:SetText("8==>");
-				button.new:SetShown(le_pipiska);
-				button.newGlow:SetShown(le_pipiska);
+				button.new:SetText("Не опубликовано");
+				button.new:SetShown(notPublicNews);
+				button.newGlow:SetShown(notPublicNews);
 			else
 				button.new:SetText(NEW_CAPS);
 				button.new:SetShown(needsFanFare);
